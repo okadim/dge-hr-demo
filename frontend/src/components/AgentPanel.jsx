@@ -57,6 +57,12 @@ export default function AgentPanel({ state, activity, persona }) {
       ? activity.runs[activity.index].key
       : null;
   const ranKeys = new Set(state.agent_runs.filter((r) => r.type === 'agent').map((r) => r.key));
+  // Also mark agents that have already completed in the CURRENT in-flight run
+  // (state.agent_runs only updates when the whole action finishes) so each
+  // agent flips to done the instant its beat ends.
+  if (activity) {
+    activity.runs.slice(0, activity.index).forEach((r) => { if (r.type === 'agent') ranKeys.add(r.key); });
+  }
   const ranHere = personaKeys.filter((k) => ranKeys.has(k)).length;
   const activeHere = activeKey && personaKeys.includes(activeKey);
   const who = PERSONAS[persona];
