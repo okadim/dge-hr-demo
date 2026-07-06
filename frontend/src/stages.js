@@ -5,8 +5,9 @@ export const STAGES = [
   {
     n: 1, title: 'Pre-boarding & Offer Acceptance',
     activities: [
-      { code: '1.1.1', persona: 'Hiring manager', label: 'Generate conditional offer letter', mode: 'ai', agents: ['HCM_40', 'HCM_53', 'HCM_92'], trigger: 'Approved requisition' },
+      { code: '1.1.1', persona: 'HR recruiter', label: 'Generate conditional offer letter', mode: 'ai', agents: ['HCM_40', 'HCM_53', 'HCM_92'], trigger: 'Approved requisition' },
       { code: '1.1.2', persona: 'Candidate', label: 'Send offer & track acceptance', mode: 'ai', agents: ['HCM_95', 'HCM_94'], trigger: 'Offer approved for dispatch' },
+      { code: '1.2.1', persona: 'HR', label: 'Initiate background & reference checks', mode: 'ai', agents: ['HCM_98'], trigger: 'Offer accepted' },
       { code: '1.3.1', persona: 'Employee', label: 'Send welcome pack & first-day instructions', mode: 'ai', agents: ['HCM_146', 'HCM_55'], trigger: 'Offer accepted' },
       { code: '1.3.2', persona: 'Employee', label: 'Collect new-hire data (bank, tax, emergency contacts)', mode: 'ai', agents: ['HCM_67', 'HCM_54'], trigger: 'Welcome pack delivered' },
       { code: '1.3.3', persona: 'Employee', label: 'Assign onboarding journey & task checklist', mode: 'ai', agents: ['HCM_54', 'HCM_44'], trigger: 'Pre-boarding data complete' },

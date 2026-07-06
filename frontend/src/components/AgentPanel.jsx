@@ -11,6 +11,7 @@ const TREES = {
   hr: [
     { crew: 'Offer drafting & review', agents: [{ key: 'HCM_40' }, { key: 'HCM_92' }] },
     { crew: 'Acceptance tracking', agents: [{ key: 'HCM_95' }, { key: 'HCM_94' }] },
+    { crew: 'Background checks', agents: [{ key: 'HCM_98' }] },
     { crew: 'Data quality', agents: [{ key: 'HCM_31' }, { key: 'HCM_1' }] },
     { crew: 'Compliance reporting', agents: [{ key: 'HCM_153' }] },
   ],

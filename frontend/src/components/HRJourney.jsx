@@ -169,7 +169,20 @@ function AishaProcess({ state, act, activity, busy, onBack }) {
             Accepted & e-signed — worker record {c.employee.employee_number} created; welcome pack sent.
             {o.employee_comment && <> Aisha's note: “{o.employee_comment}”</>}
           </p>
-        : <p className="muted-text">Aisha reviews and e-signs in the candidate portal. On acceptance the worker record and employee number are created automatically.</p>,
+        : <p className="muted-text">
+            Aisha reviews and e-signs in the candidate portal. On acceptance the worker record and employee
+            number are created automatically.
+            {o.call_requested && <> <strong>Aisha requested a call to review the offer — reach out.</strong></>}
+          </p>,
+    },
+    {
+      title: 'Background & reference checks', owner: 'Candidate Checker → HR', ownerKind: 'hr',
+      status: c.provisioning.status === 'done' ? 'done' : o.status === 'accepted' ? 'action' : 'waiting',
+      body: c.provisioning.status === 'done'
+        ? <p className="muted-text"><AgentTag name="Candidate Checker" cKey="HCM_98" /> completed tracking — checks and routine clearance closed with no findings.</p>
+        : o.status === 'accepted'
+          ? <p className="muted-text"><AgentTag name="Candidate Checker" cKey="HCM_98" /> initiated background & reference checks with the external provider on acceptance — status lands here automatically.</p>
+          : <p className="muted-text">Starts automatically the moment Aisha accepts — <AgentTag name="Candidate Checker" cKey="HCM_98" /> tracks the external provider.</p>,
     },
     {
       title: 'Pre-boarding data & quality check', owner: 'Aisha, then HR data agents', ownerKind: 'other',
@@ -203,8 +216,8 @@ function AishaProcess({ state, act, activity, busy, onBack }) {
       title: 'Probation review & decision', owner: 'Khalid — Manager', ownerKind: 'other',
       status: c.probation.status === 'decided' ? 'done' : ['ready', 'compiled'].includes(c.probation.status) ? 'action' : 'waiting',
       body: c.probation.status === 'decided'
-        ? <p className="muted-text">Decision recorded — status updated and payroll, IT, and Aisha notified. Confirmation paperwork ready.</p>
-        : <p className="muted-text">At day 90 Khalid compiles the agent-built evidence pack and takes the confirm / extend / terminate decision — human authority, no AI on that screen.</p>,
+        ? <p className="muted-text">Appointment confirmed effective {c.probation.appointment_date} — payroll, IT, and Aisha notified. Confirmation paperwork ready.</p>
+        : <p className="muted-text">At day 90 Khalid compiles the probation review criteria, evaluates performance, and confirms the appointment date. Extending or ending probation rests with the HR Director.</p>,
     },
   ];
 

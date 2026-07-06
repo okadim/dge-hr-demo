@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, Send, Sparkles, PenLine, Upload, PartyPopper, MapPin, CalendarDays, BadgeCheck, UserRound, FileClock } from 'lucide-react';
+import { Check, Send, Sparkles, PenLine, Upload, PartyPopper, MapPin, CalendarDays, BadgeCheck, UserRound, FileClock, MessagesSquare } from 'lucide-react';
 import { Eyebrow, TaskIcon, TermsTable, CrewPlayer, AgentTag, AgentTypeChip, LockedNote, PersonaProfileCard } from './shared.jsx';
 import OfferReviewModal from './OfferReviewModal.jsx';
 
@@ -127,6 +127,9 @@ function OfferCard({ c, act, activity, busy }) {
               </button>
             </div>
           )}
+          {o.call_requested && (
+            <p className="card-caption">A call with HR has been requested — they'll reach out before the offer deadline.</p>
+          )}
           {reviewOpen && (
             <OfferReviewModal
               mode="employee"
@@ -134,6 +137,7 @@ function OfferCard({ c, act, activity, busy }) {
               busy={busy}
               onClose={() => setReviewOpen(false)}
               onApprove={(payload) => { setReviewOpen(false); act('accept-offer', payload); }}
+              onRequestCall={() => act('request-call')}
             />
           )}
         </>
@@ -344,8 +348,10 @@ function OutcomeCard({ c }) {
           <div>
             <div className="outcome-title">Confirmed in role</div>
             <p className="outcome-text">
-              Congratulations, Aisha — your appointment as Policy Analyst is confirmed. Payroll and IT have
-              been notified, and your development plan for the next quarter is ready with your manager.
+              Congratulations, Aisha — your appointment as Policy Analyst is confirmed
+              {c.probation.appointment_date && <> effective <strong>{c.probation.appointment_date}</strong></>}.
+              Payroll and IT have been notified, and your development plan for the next quarter is ready
+              with your manager.
             </p>
           </div>
         </div>
@@ -385,7 +391,10 @@ function ChatCard({ state, act, activity, busy }) {
 
   return (
     <div className="card chat-card">
-      <Eyebrow>Ask HR anything</Eyebrow>
+      <div className="chat-head">
+        <span className="chat-head-icon"><MessagesSquare size={16} /></span>
+        <Eyebrow>Ask HR anything</Eyebrow>
+      </div>
       <p className="card-caption">
         <AgentTag name="Worker Concierge" cKey="HCM_90" /> for general questions ·{' '}
         <AgentTag name="Benefits Analyst" cKey="HCM_2" /> for benefits

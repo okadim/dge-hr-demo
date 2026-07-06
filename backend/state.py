@@ -15,6 +15,7 @@ OFFER_TERMS_V1 = [
     {"label": "Base salary",       "value": "AED 28,000 / month"},
     {"label": "Housing allowance", "value": "AED 90,000 / year"},
     {"label": "Start date",        "value": "Sunday, 2 August 2026"},
+    {"label": "Probation period",  "value": "90 days from start date"},
 ]
 
 OFFER_TERMS_V2 = [
@@ -94,16 +95,14 @@ CHAT_PERSONAS = {
 
 HOURS_SAVED = [
     {"milestone": "offer_dispatched",  "label": "Offer drafting & dispatch",        "hours": 2.0},
-    {"milestone": "offer_accepted",    "label": "Welcome pack & first-day comms",   "hours": 1.0},
+    {"milestone": "offer_accepted",    "label": "Welcome pack & first-day comms",   "hours": 0.5},
     {"milestone": "details_submitted", "label": "New-hire data collection & journey setup", "hours": 2.0},
-    {"milestone": "provisioned",       "label": "IT account provisioning follow-up", "hours": 4.0},
+    {"milestone": "provisioned",       "label": "IT account provisioning follow-up", "hours": 1.0},
     {"milestone": "schedule_confirmed","label": "Schedule & location setup",        "hours": 0.5},
-    {"milestone": "benefits_enrolled", "label": "Benefits guidance & enrolment support", "hours": 3.0},
+    {"milestone": "benefits_enrolled", "label": "Benefits guidance & enrolment support", "hours": 0.5},
     {"milestone": "probation_compiled","label": "Probation evidence gathering & summary", "hours": 3.0},
     {"milestone": "details_submitted", "label": "Personal data validation & correction",  "hours": 0.5},
-    {"milestone": "provisioned",       "label": "Role-based access mapping",              "hours": 1.0},
     {"milestone": "schedule_confirmed","label": "Equipment delivery follow-up",           "hours": 0.5},
-    {"milestone": "probation_compiled","label": "Compliance & progress reporting",        "hours": 2.0},
 ]
 
 
@@ -131,6 +130,7 @@ def seed():
             "hr_comment": None,
             "hr_edited": False,
             "employee_comment": None,
+            "call_requested": False,
         },
         "welcome_pack": {"ready": False, "items": [
             {"title": "Day 1 logistics", "text": "Sunday 2 Aug, 8:00 · Al Maqam Tower reception · smart business dress · parking level P2"},
@@ -155,6 +155,8 @@ def seed():
         "provisioning": {"status": "locked", "credentials": None, "ticket": None},  # locked | ready | done
         "schedule": {
             "status": "locked",  # locked | proposed | confirmed
+            "equipment": None,
+            "trainings": None,
             "proposed": {"days": "Sun–Thu", "hours": "8:00–16:00", "mode": "Hybrid (2 days remote)",
                          "location": "Al Maqam Tower, Abu Dhabi"},
             "final": None,
@@ -170,6 +172,7 @@ def seed():
             "evidence": None,
             "summary": None,
             "decision": None,
+            "appointment_date": None,
         },
         "chat": [
             {"from": "assistant", "agent": "Worker Concierge", "key": "HCM_90",
@@ -220,7 +223,7 @@ def _next_human_action(s):
     if s["probation"]["status"] == "ready":
         return "Manager: compile the day-90 evidence pack"
     if s["probation"]["status"] == "compiled":
-        return "Manager: probation decision (human authority)"
+        return "Manager: confirm the appointment date"
     if s["probation"]["status"] == "decided":
         return "Journey complete"
     return "—"
@@ -257,8 +260,8 @@ def serialize(last_runs=None):
             "next_human_action": _next_human_action(s),
         },
         "value": {
-            "activities_total": 23,
-            "ai_run": 16,
+            "activities_total": 24,
+            "ai_run": 17,
             "system_automated": 6,
             "human_decisions": 1,
             "hours_saved": hours,
@@ -325,6 +328,13 @@ def accept_offer(body):
     return runs
 
 
+def request_call(body):
+    if STATE["offer"]["status"] != "sent":
+        raise ActionError("A call can be requested while the offer is awaiting your decision.")
+    STATE["offer"]["call_requested"] = True
+    return []
+
+
 def submit_details(body):
     if STATE["details"]["status"] != "available":
         raise ActionError("Details are not open for submission.")
@@ -359,6 +369,10 @@ def confirm_schedule(body):
     if STATE["schedule"]["status"] != "proposed":
         raise ActionError("No schedule proposal awaiting confirmation.")
     adjusted = bool(body.get("adjusted"))
+    if body.get("equipment") is not None:
+        STATE["schedule"]["equipment"] = body["equipment"]
+    if body.get("trainings") is not None:
+        STATE["schedule"]["trainings"] = body["trainings"]
     runs = _record(CREWS["schedule_confirm"](adjusted))
     final = dict(STATE["schedule"]["proposed"])
     if adjusted:
@@ -448,14 +462,18 @@ def compile_probation(body):
 
 def decide(body):
     decision = body.get("decision")
+    date = (body.get("date") or "").strip()
     if STATE["probation"]["status"] != "compiled":
-        raise ActionError("Compile the evidence pack before the decision.")
-    if decision not in ("confirm", "extend", "terminate"):
-        raise ActionError("Decision must be confirm, extend, or terminate.")
+        raise ActionError("Compile the review criteria before confirming.")
+    if decision != "confirm":
+        raise ActionError("Extending or ending probation rests with the HR Director.")
+    if not date:
+        raise ActionError("Select the appointment date first.")
     # 8.4.2 is human authority — no agent runs here, only the follow-on system event.
-    runs = _record(CREWS["probation_close"](decision))
+    runs = _record(CREWS["probation_close"](date))
     STATE["probation"]["status"] = "decided"
     STATE["probation"]["decision"] = decision
+    STATE["probation"]["appointment_date"] = date
     _task(STATE, "t7", "done")
     return runs
 
@@ -473,6 +491,7 @@ ACTIONS = {
     "submit-details": submit_details,
     "run-provisioning": run_provisioning,
     "confirm-schedule": confirm_schedule,
+    "request-call": request_call,
     "ask-question": ask_question,
     "enrol-benefits": enrol_benefits,
     "upload-eid": upload_eid,

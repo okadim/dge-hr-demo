@@ -76,8 +76,9 @@ export default function ValueDelivered({ state }) {
             </div>
             <ul className="human-list">
               <li>
-                <strong>Probation decision.</strong> Confirm, extend, or terminate stays with the
-                accountable manager. The decision screen carries no AI assistance by design.
+                <strong>Probation decision.</strong> The manager evaluates performance and confirms
+                the appointment date; extending or ending probation rests with the HR Director. The
+                decision screen carries no AI assistance by design.
               </li>
               <li>
                 <strong>Offer approval & dispatch.</strong> Agents draft and redraft; the hiring manager

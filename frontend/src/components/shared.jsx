@@ -37,7 +37,7 @@ export const AGENT_TYPE = {
   HCM_67: 'oracle', HCM_54: 'oracle', HCM_44: 'oracle', HCM_73: 'oracle', HCM_6: 'oracle',
   HCM_4: 'oracle', HCM_5: 'oracle', HCM_2: 'oracle', HCM_90: 'oracle', HCM_81: 'oracle',
   HCM_31: 'oracle', HCM_1: 'oracle', HCM_76: 'oracle', HCM_52: 'oracle',
-  HCM_95: 'custom', HCM_94: 'custom', HCM_89: 'custom', HCM_12: 'custom', HCM_75: 'custom',
+  HCM_95: 'custom', HCM_94: 'custom', HCM_98: 'custom', HCM_89: 'custom', HCM_12: 'custom', HCM_75: 'custom',
   HCM_152: 'custom', HCM_153: 'custom', HCM_97: 'custom', HCM_111: 'custom',
 };
 

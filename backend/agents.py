@@ -111,6 +111,7 @@ ROSTER = [
     {"key": "HCM_92",  "name": "Redraft Offer Letters",                  "badge": ORACLE, "activity": "1.1.1", "does": "Revises the draft on manager change-request."},
     {"key": "HCM_95",  "name": "Task Reminder",                          "badge": CUSTOM, "activity": "1.1.2", "does": "Monitors elapsed time and auto-sends reminders to candidates who have not responded, escalating to the recruiter after a threshold."},
     {"key": "HCM_94",  "name": "Candidate Mover",                        "badge": CUSTOM, "activity": "1.1.2", "does": "Moves the candidate through the pipeline as responses arrive."},
+    {"key": "HCM_98",  "name": "Candidate Checker",                      "badge": CUSTOM, "activity": "1.2.1", "does": "Triggers background-check requests to the external provider and tracks status updates automatically."},
     {"key": "HCM_146", "name": "Welcome (pre day-one)",                  "badge": ORACLE, "activity": "1.3.1", "does": "Assembles the personalised welcome pack (org chart, buddy name, dress code, location map)."},
     {"key": "HCM_55",  "name": "Onboarding Checklist Agent",             "badge": ORACLE, "activity": "1.3.1", "does": "Attaches first-day instructions and the checklist."},
     {"key": "HCM_67",  "name": "Personal Information Assistant",         "badge": ORACLE, "activity": "1.3.2", "does": "Guided collection of bank, tax, and emergency contact details."},
@@ -177,6 +178,10 @@ CREWS = {
     "accept_offer": lambda: [
         agent_step("HCM_94", "Recording acceptance & moving candidate", 1000,
                    "Acceptance recorded — Aisha moved to 'Offer accepted' in the recruiting pipeline; reminders cancelled."),
+        system_step("1.1.2", "Notify hiring manager of acceptance",
+                    "Khalid Al Hammadi notified — Aisha accepted the offer; pre-boarding is starting."),
+        agent_step("HCM_98", "Initiating background & reference checks", 1100,
+                   "Background & reference checks initiated with the external provider — status tracked automatically."),
         system_step("2.1.1", "Convert candidate to employee in HCM",
                     "Candidate record converted to worker record with the correct work relationship."),
         system_step("2.1.2", "Assign employee number & org unit",
@@ -255,12 +260,9 @@ CREWS = {
         agent_step("HCM_111", "Drafting the 90-day probation summary", 1500,
                    "Draft summary ready for the manager's final assessment."),
     ],
-    "probation_close": lambda decision: [
+    "probation_close": lambda date: [
         system_step("8.4.3", "Update employee status & notify",
-                    {
-                        "confirm": "Employment status updated to Confirmed. Payroll, IT, and Aisha notified.",
-                        "extend": "Probation extended by 90 days. Payroll, IT, and Aisha notified.",
-                        "terminate": "Employment ended at probation. Payroll, IT, and Aisha notified.",
-                    }[decision]),
+                    f"Employment status updated to Confirmed — appointment effective {date}. "
+                    "Payroll, IT, and Aisha notified."),
     ],
 }

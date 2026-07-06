@@ -42,8 +42,8 @@ export default function ManagerView({ state, act, activity, busy }) {
         <div className="two-col">
           <div className="col">
             <OfferReview c={c} act={act} activity={activity} busy={busy} />
-            <ScheduleCard c={c} act={act} activity={activity} busy={busy} />
             <IdentityPipeline state={state} act={act} activity={activity} busy={busy} />
+            <ScheduleCard c={c} act={act} activity={activity} busy={busy} />
           </div>
           <div className="col">
             <StatusUpdates c={c} />
@@ -89,7 +89,7 @@ function ManagerTasks({ c }) {
     ['Approve identity & application access', c.provisioning.status === 'done' ? 'done' : c.provisioning.status === 'ready' ? 'pending' : 'locked'],
     ['Approve schedule, equipment & training', c.schedule.status === 'confirmed' ? 'done' : c.schedule.status === 'proposed' ? 'pending' : 'locked'],
     ['Compile the day-90 evidence pack', ['compiled', 'decided'].includes(c.probation.status) ? 'done' : c.probation.status === 'ready' ? 'pending' : 'locked'],
-    ['Probation decision — human authority', c.probation.status === 'decided' ? 'done' : c.probation.status === 'compiled' ? 'pending' : 'locked'],
+    ['Confirm the appointment date — human authority', c.probation.status === 'decided' ? 'done' : c.probation.status === 'compiled' ? 'pending' : 'locked'],
   ];
   return (
     <div className="card checklist-card">
@@ -114,7 +114,8 @@ function StatusUpdates({ c }) {
   const items = [];
   if (['sent', 'accepted'].includes(c.offer.status)) items.push(['Offer dispatched to Aisha — acceptance tracking armed', true]);
   items.push(['Candidate offer acceptance', c.offer.status === 'accepted']);
-  items.push(['Security clearance — routine check', c.offer.status === 'accepted']);
+  items.push(['Background & reference checks initiated', c.offer.status === 'accepted']);
+  items.push(['Security clearance — routine check', c.provisioning.status === 'done']);
   items.push(['Pre-boarding data submitted & validated', c.details.status === 'submitted']);
   items.push(['Benefits enrolment completed', c.benefits.status === 'enrolled']);
   items.push(['Training & compliance report filed', ['compiled', 'decided'].includes(c.probation.status)]);
@@ -203,7 +204,7 @@ function OfferReview({ c, act, activity, busy }) {
           {o.hr_comment && o.status === 'awaiting_review' && (
             <div className="redraft-note"><strong>HR note:</strong> {o.hr_comment}</div>
           )}
-          <TermsTable terms={o.terms} previous={o.status === 'awaiting_review' && o.hr_edited ? o.previous_terms : null} />
+          <TermsTable terms={o.terms.filter((t) => !['Base salary', 'Housing allowance'].includes(t.label))} />
 
           <CrewPlayer activity={activity} action="approve-offer" />
 
@@ -298,9 +299,51 @@ function IdentityPipeline({ state, act, activity, busy }) {
   );
 }
 
+const EQUIPMENT_ITEMS = [
+  { id: 'laptop', label: 'Laptop — ThinkPad X1 (standard build)', mandatory: true },
+  { id: 'monitor', label: 'External monitor 27"', mandatory: false },
+  { id: 'dock', label: 'Docking station', mandatory: false },
+  { id: 'headset', label: 'Headset for calls', mandatory: false },
+];
+const TRAINING_ITEMS = [
+  { id: 'data', label: 'Government Data Handling (mandatory)', mandatory: true },
+  { id: 'conduct', label: 'Code of Conduct & Ethics (mandatory)', mandatory: true },
+  { id: 'policy', label: 'Policy Analysis Toolkit (role)', mandatory: false },
+  { id: 'culture', label: 'DGE Ways of Working', mandatory: false },
+];
+
+function PickList({ title, items, picked, onToggle, disabled }) {
+  return (
+    <div className="pick-block">
+      <div className="pick-title">{title}</div>
+      <div className="pick-list">
+        {items.map((it) => (
+          <label key={it.id} className={`pick-row ${it.mandatory ? 'pick-mandatory' : ''}`}>
+            <input
+              type="checkbox"
+              checked={picked.includes(it.id)}
+              disabled={disabled || it.mandatory}
+              onChange={() => onToggle(it.id)}
+            />
+            <span>{it.label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ScheduleCard({ c, act, activity, busy }) {
   const s = c.schedule;
   const playing = isPlaying(activity, 'confirm-schedule');
+  const [equip, setEquip] = useState(EQUIPMENT_ITEMS.map((i) => i.id));
+  const [train, setTrain] = useState(TRAINING_ITEMS.map((i) => i.id));
+  const toggle = (list, setList) => (id) =>
+    setList(list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
+  const selections = () => ({
+    equipment: EQUIPMENT_ITEMS.filter((i) => equip.includes(i.id)).map((i) => i.label),
+    trainings: TRAINING_ITEMS.filter((i) => train.includes(i.id)).map((i) => i.label),
+  });
   return (
     <div className={`card ${s.status === 'locked' ? 'card-compact' : ''}`} id="m-schedule">
       <div className="card-head-row">
@@ -321,13 +364,17 @@ function ScheduleCard({ c, act, activity, busy }) {
             <div className="sched-row"><span>Mode</span><strong>{s.proposed.mode}</strong></div>
             <div className="sched-row"><span>Location</span><strong>{s.proposed.location}</strong></div>
           </div>
+          <div className="pick-grid">
+            <PickList title="Equipment to provision" items={EQUIPMENT_ITEMS} picked={equip} onToggle={toggle(equip, setEquip)} disabled={busy} />
+            <PickList title="Training plan to assign" items={TRAINING_ITEMS} picked={train} onToggle={toggle(train, setTrain)} disabled={busy} />
+          </div>
           <CrewPlayer activity={activity} action="confirm-schedule" />
           {!playing && (
             <div className="card-actions">
-              <button className="btn btn-primary" data-guide="confirm-schedule" onClick={() => act('confirm-schedule', { adjusted: false })} disabled={busy}>
+              <button className="btn btn-primary" data-guide="confirm-schedule" onClick={() => act('confirm-schedule', { adjusted: false, ...selections() })} disabled={busy}>
                 <Check size={14} /> Approve as proposed
               </button>
-              <button className="btn btn-outline" onClick={() => act('confirm-schedule', { adjusted: true })} disabled={busy}>
+              <button className="btn btn-outline" onClick={() => act('confirm-schedule', { adjusted: true, ...selections() })} disabled={busy}>
                 Adjust to 8:30–16:30 & confirm
               </button>
             </div>
@@ -343,6 +390,12 @@ function ScheduleCard({ c, act, activity, busy }) {
             <div className="sched-row"><span>Mode</span><strong>{s.final.mode}</strong></div>
             <div className="sched-row"><span>Location</span><strong>{s.final.location}</strong></div>
           </div>
+          {(s.equipment || s.trainings) && (
+            <div className="pick-approved">
+              {(s.equipment || []).map((e) => <span key={e} className="ready-chip ready-done"><Check size={11} /> {e}</span>)}
+              {(s.trainings || []).map((t) => <span key={t} className="ready-chip ready-active">{t}</span>)}
+            </div>
+          )}
           <div className="done-note">
             <Check size={14} />
             <span>
@@ -377,7 +430,7 @@ function EvidenceCard({ p, act, activity, busy }) {
   return (
     <div className="card">
       <div className="card-head-row">
-        <Eyebrow>Final probation review</Eyebrow>
+        <Eyebrow>Probation review criteria</Eyebrow>
         <FolderSearch size={15} className="card-head-icon" />
       </div>
       <p className="card-caption">
@@ -431,16 +484,13 @@ function EvidenceCard({ p, act, activity, busy }) {
 // The decision screen carries zero AI assistance: no agent names, no
 // recommendations, no generated copy — an accountable human decides.
 function DecisionCard({ act, busy }) {
-  const [pending, setPending] = useState(null);
-  const LABELS = {
-    confirm: 'Confirm appointment',
-    extend: 'Extend probation by 90 days',
-    terminate: 'End employment at probation',
-  };
+  const [pending, setPending] = useState(false);
+  const [date, setDate] = useState('2026-11-01');
+  const nice = (d) => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   useEffect(() => {
     if (!pending) return;
-    const onKey = (e) => e.key === 'Escape' && setPending(null);
+    const onKey = (e) => e.key === 'Escape' && setPending(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [pending]);
@@ -452,38 +502,37 @@ function DecisionCard({ act, busy }) {
         <Badge kind="Human authority" />
       </div>
       <p className="decision-text">
-        The probation decision rests with the accountable manager. Review the record, then decide.
+        You evaluate performance against the review criteria and confirm the appointment, setting its
+        effective date. Extending or ending probation is decided by the HR Director.
       </p>
       <div className="decision-actions" data-guide="decision">
-        <button className="btn btn-gold" onClick={() => setPending('confirm')} disabled={busy}>
+        <label className="date-field">
+          <span className="date-label">Appointment date</span>
+          <input type="date" className="date-input" value={date} onChange={(e) => setDate(e.target.value)} disabled={busy} />
+        </label>
+        <button className="btn btn-gold" onClick={() => setPending(true)} disabled={busy || !date}>
           Confirm appointment
-        </button>
-        <button className="btn btn-outline" onClick={() => setPending('extend')} disabled={busy}>
-          Extend probation
-        </button>
-        <button className="btn btn-outline btn-danger" onClick={() => setPending('terminate')} disabled={busy}>
-          Terminate
         </button>
       </div>
 
       {pending && (
-        <div className="modal-backdrop" onClick={() => setPending(null)}>
+        <div className="modal-backdrop" onClick={() => setPending(false)}>
           <div className="modal" role="dialog" aria-modal="true" aria-label="Confirm your decision" onClick={(e) => e.stopPropagation()}>
             <div className="modal-head">
               <ShieldCheck size={16} />
               <span>Confirm your decision</span>
             </div>
             <p className="modal-text">
-              {LABELS[pending]} for <strong>Aisha Al Khoori</strong>? Her status will be updated and
-              payroll, IT, and Aisha will be notified.
+              Confirm <strong>Aisha Al Khoori</strong>'s appointment effective <strong>{nice(date)}</strong>?
+              Her status will be updated and payroll, IT, and Aisha will be notified.
             </p>
             <div className="modal-actions">
-              <button className="btn btn-outline" autoFocus onClick={() => setPending(null)}>Cancel</button>
+              <button className="btn btn-outline" autoFocus onClick={() => setPending(false)}>Cancel</button>
               <button
                 className="btn btn-gold"
-                onClick={() => { act('decide', { decision: pending }); setPending(null); }}
+                onClick={() => { act('decide', { decision: 'confirm', date: nice(date) }); setPending(false); }}
               >
-                {LABELS[pending]}
+                Confirm appointment
               </button>
             </div>
           </div>
@@ -494,8 +543,6 @@ function DecisionCard({ act, busy }) {
 }
 
 function ClosedCard({ c }) {
-  const d = c.probation.decision;
-  const TITLES = { confirm: 'Appointment confirmed', extend: 'Probation extended', terminate: 'Employment ended' };
   return (
     <div className="card decision-card reveal">
       <div className="card-head-row">
@@ -504,11 +551,13 @@ function ClosedCard({ c }) {
       </div>
       <div className="done-note done-gold">
         <Check size={14} />
-        <span><strong>{TITLES[d]}</strong> — recorded by Khalid Al Hammadi.</span>
+        <span>
+          <strong>Appointment confirmed</strong> — effective {c.probation.appointment_date} · recorded by
+          Khalid Al Hammadi.
+        </span>
       </div>
       <div className="system-note">
-        Work Automation — status updated{d === 'confirm' ? ' to Confirmed' : ''}; payroll, IT,
-        and Aisha notified.
+        Work Automation — status updated to Confirmed; payroll, IT, and Aisha notified.
       </div>
     </div>
   );

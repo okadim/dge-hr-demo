@@ -1223,3 +1223,40 @@ body.guide-open .main { padding-bottom: 300px; }
 @media (max-width: 1360px) {
   .persona-btn-role { display: none; }
 }
+
+
+/* ---------- equipment / training pickers (manager approval) ---------- */
+.pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+.pick-title { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+.pick-list { display: flex; flex-direction: column; }
+.pick-row {
+  display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--ink-soft);
+  padding: 7px 2px; border-bottom: 1px solid var(--line); cursor: pointer;
+}
+.pick-row:last-child { border-bottom: none; }
+.pick-row input[type='checkbox'] { accent-color: var(--acc); width: 15px; height: 15px; cursor: pointer; }
+.pick-mandatory { color: var(--ink-muted); }
+.pick-approved { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+@media (max-width: 900px) { .pick-grid { grid-template-columns: 1fr; } }
+
+/* ---------- appointment date (human decision) ---------- */
+.date-field { display: flex; flex-direction: column; gap: 4px; }
+.date-label { font-size: 11.5px; font-weight: 600; color: var(--ink-soft); }
+.date-input {
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: 10px;
+  color: var(--ink); font: inherit; font-size: 13px; padding: 8px 12px; min-height: 40px;
+  color-scheme: dark;
+}
+.date-input:focus { outline: none; border-color: var(--amber); }
+.decision-actions { align-items: flex-end; }
+
+/* ---------- chat header + consent + call chip ---------- */
+.chat-head { display: flex; align-items: center; gap: 9px; }
+.chat-head-icon {
+  width: 30px; height: 30px; border-radius: 9px; background: var(--acc-soft); color: var(--acc-light);
+  display: flex; align-items: center; justify-content: center; flex: none;
+}
+.chat-scroll { background: var(--panel); border-radius: 12px; padding: 12px; margin-top: 4px; }
+.msg { border-radius: 14px; }
+.doc-consent { font-size: 12px; color: var(--ink-muted); margin-top: 10px; }
+.call-chip { align-self: center; }

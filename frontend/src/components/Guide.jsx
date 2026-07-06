@@ -54,7 +54,7 @@ const STEPS = [
     when: (c) => c.benefits.status === 'open',
     persona: 'employee', personaLabel: 'Employee — Aisha',
     target: () => 'enrol-benefits',
-    text: () => 'Compare the plans, ask the assistant a question if you like, then enrol with the two dependants.',
+    text: () => 'Compare the plans and pick the coverage type that fits how many family members you are covering — ask the assistant a question, then enrol with the two dependants.',
   },
   {
     id: 'eid',
@@ -68,14 +68,14 @@ const STEPS = [
     when: (c) => c.probation.status === 'ready',
     persona: 'manager', personaLabel: 'Manager — Khalid',
     target: () => 'compile-probation',
-    text: () => 'Aisha reaches day 90 — compile the evidence pack for the final probation review.',
+    text: () => 'Aisha reaches day 90 — compile the probation review criteria: the evidence for your performance evaluation.',
   },
   {
     id: 'decision',
     when: (c) => c.probation.status === 'compiled',
     persona: 'manager', personaLabel: 'Manager — Khalid',
     target: () => 'decision',
-    text: () => 'The decision is yours alone — no AI on this screen. Confirm, extend, or terminate.',
+    text: () => 'You evaluate performance and confirm the appointment date — extending or ending probation is decided by HR. No AI on this screen.',
   },
   {
     id: 'value',

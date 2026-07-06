@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Pencil, AtSign, ShieldCheck, PenLine, ArrowDown } from 'lucide-react';
+import { X, Pencil, AtSign, ShieldCheck, PenLine, ArrowDown, PhoneCall, Check } from 'lucide-react';
 import { AgentTag } from './shared.jsx';
 
 // The human-in-the-middle document review. Mandatory: the reviewer must
 // scroll to the end of the letter before Approve unlocks; HR must also leave
 // a review comment (with an @tag). HR can edit the housing allowance — shown
 // as a tracked change and applied to the letter by Redraft Offer Letters.
-export default function OfferReviewModal({ mode, offer, busy, onApprove, onClose }) {
+export default function OfferReviewModal({ mode, offer, busy, onApprove, onClose, onRequestCall }) {
   const [reachedEnd, setReachedEnd] = useState(false);
   const [comment, setComment] = useState('');
   const [edited, setEdited] = useState(false);
@@ -64,7 +64,9 @@ export default function OfferReviewModal({ mode, offer, busy, onApprove, onClose
           </p>
 
           <div className="doc-terms">
-            {offer.terms.map((t) => (
+            {offer.terms
+              .filter((t) => mode !== 'manager' || !['Base salary', 'Housing allowance'].includes(t.label))
+              .map((t) => (
               <div key={t.label} className="doc-term">
                 <span className="doc-term-label">{t.label}</span>
                 <span className="doc-term-value">
@@ -169,7 +171,21 @@ export default function OfferReviewModal({ mode, offer, busy, onApprove, onClose
           )
         )}
 
+        {isEmployee && (
+          <p className="doc-consent">
+            By e-signing you accept these terms, including the 90-day probation period.
+          </p>
+        )}
         <div className="modal-actions doc-actions">
+          {isEmployee && (
+            offer.call_requested ? (
+              <span className="ready-chip ready-done call-chip"><Check size={11} /> Call requested — HR will contact you</span>
+            ) : (
+              <button className="btn btn-outline" onClick={onRequestCall} disabled={busy}>
+                <PhoneCall size={13} /> Request a call to review
+              </button>
+            )
+          )}
           <button className="btn btn-outline" onClick={onClose}>Close</button>
           <button
             className={isEmployee ? 'btn btn-primary' : 'btn btn-gold'}

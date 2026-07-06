@@ -13,3 +13,6 @@ class ActionBody(BaseModel):
     file_name: Optional[str] = None     # upload-eid: original file name
     comment: Optional[str] = None       # approve-draft: mandatory HR review comment
     edited: Optional[bool] = None       # approve-draft: HR made the tracked change
+    date: Optional[str] = None          # decide: manager-selected appointment date
+    equipment: Optional[list] = None    # confirm-schedule: approved equipment items
+    trainings: Optional[list] = None    # confirm-schedule: approved training items
