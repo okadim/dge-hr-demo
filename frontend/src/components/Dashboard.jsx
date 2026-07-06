@@ -2,25 +2,21 @@ import { Layers, ListChecks, Bot, Boxes, Zap, ShieldCheck, Clock, ArrowRight } f
 import { Eyebrow } from './shared.jsx';
 import { STAGES } from '../stages.js';
 
-// One overall view: the shape of the whole agentified process at a glance.
-// Total tasks (green + yellow color-coded) is a headline figure — kept as a
-// single constant so it's trivial to reconcile with the client's mapping.
-const TASKS_TOTAL = 37;
+// One overall view: the full scope from the client's mapping (green + yellow
+// highlighted rows of New_Employee_Onboarding_Process_Hierarchy_V1_2.xlsx).
+// Verified against the file: 41 highlighted rows = 26 AI-managed + 10 system
+// + 5 stays-manual; 37 automatable tasks = 26 AI + 10 system + 1 human
+// decision (the 4 excluded stays-manual rows are external candidate actions).
+const SCOPE = { steps: 6, tasks: 37, ai: 26, oracle: 19, custom: 10, system: 10, human: 1, hours: 10.5 };
 
 export default function Dashboard({ state, setView }) {
-  const v = state.value;
-  const oracle = state.roster.filter((a) => a.badge === 'Oracle Fusion HCM').length;
-  const custom = state.roster.length - oracle;
-  const hoursTotal = v.hours_saved.reduce((s, h) => s + h.hours, 0);
-
   const tiles = [
-    { icon: Layers, value: STAGES.length, label: 'Key process steps' },
-    { icon: ListChecks, value: TASKS_TOTAL, label: 'Tasks in scope', sub: 'green + yellow in the mapping' },
-    { icon: Bot, value: oracle, label: 'Oracle agents', accent: 'oracle' },
-    { icon: Boxes, value: custom, label: 'Custom agents', accent: 'custom' },
-    { icon: Zap, value: v.system_automated, label: 'System automations', sub: 'run by the workflow itself', accent: 'system' },
-    { icon: ShieldCheck, value: v.human_decisions, label: 'Human decision', accent: 'human' },
-    { icon: Clock, value: `${hoursTotal.toFixed(1)}h`, label: 'Hours saved per hire', sub: 'LLM-estimated', accent: 'green' },
+    { icon: Layers, value: SCOPE.steps, label: 'Key process steps' },
+    { icon: ListChecks, value: SCOPE.tasks, label: 'Tasks in scope', sub: 'green + yellow in the mapping' },
+    { icon: Bot, value: SCOPE.ai, label: 'AI-agent managed', sub: `${SCOPE.oracle} Oracle · ${SCOPE.custom} custom agents`, accent: 'oracle' },
+    { icon: Zap, value: SCOPE.system, label: 'System automations', sub: 'run by the workflow itself', accent: 'system' },
+    { icon: ShieldCheck, value: SCOPE.human, label: 'Human decision', sub: 'probation confirmation', accent: 'human' },
+    { icon: Clock, value: `${SCOPE.hours.toFixed(1)}h`, label: 'Hours saved per hire', sub: 'LLM-estimated', accent: 'green' },
   ];
 
   return (
