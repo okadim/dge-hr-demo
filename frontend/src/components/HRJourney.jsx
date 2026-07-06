@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Check, ChevronRight, ArrowLeft, Loader2, FileSearch, MapPin, Briefcase, Users as UsersIcon } from 'lucide-react';
-import { Eyebrow, CrewPlayer, AgentTag, LockedNote, TaskIcon, PersonaProfileCard } from './shared.jsx';
+import { Eyebrow, CrewPlayer, AgentTag, LockedNote, TaskIcon, PersonaProfileCard, avatarStyle } from './shared.jsx';
 import { PERSONAS } from '../personas.js';
 import OfferReviewModal from './OfferReviewModal.jsx';
 
@@ -79,7 +79,7 @@ function Dashboard({ state, onOpen }) {
       <Eyebrow>Onboarding dashboard — select a candidate</Eyebrow>
       <div className="cand-grid">
         <button className="card cand-card cand-live" data-guide="open-candidate" onClick={() => onOpen('aisha')}>
-          <span className="persona-avatar">AA</span>
+          <span className="persona-avatar" style={avatarStyle('Aisha')}>AA</span>
           <span className="cand-name">Aisha Al Khoori</span>
           <span className="cand-role">Policy Analyst · starts {c.employee.start_date}</span>
           <span className="cand-status">{state.kpis.next_human_action}</span>
@@ -87,7 +87,7 @@ function Dashboard({ state, onOpen }) {
         </button>
         {state.background_hires.map((h) => (
           <button key={h.name} className="card cand-card" onClick={() => onOpen(h.name)}>
-            <span className="persona-avatar cand-avatar-muted">{h.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
+            <span className="persona-avatar" style={avatarStyle(h.name)}>{h.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
             <span className="cand-name">{h.name}</span>
             <span className="cand-role">{h.role}</span>
             <span className="cand-status">{h.note}</span>

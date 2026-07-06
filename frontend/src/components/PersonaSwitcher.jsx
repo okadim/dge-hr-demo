@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { PERSONAS, PERSONA_ORDER } from '../personas.js';
+import { avatarStyle } from './shared.jsx';
 
 // Profile dropdown (top-right): shows who you are viewing as, switches users.
 export default function PersonaSwitcher({ persona, setPersona, setView }) {
@@ -32,7 +33,7 @@ export default function PersonaSwitcher({ persona, setPersona, setView }) {
         aria-expanded={open}
         aria-label={`Viewing as ${current.name} — switch user`}
       >
-        <span className="persona-avatar">{current.initials}</span>
+        <span className="persona-avatar" style={avatarStyle(current.name)}>{current.initials}</span>
         <span className="persona-btn-text">
           <span className="persona-btn-name">{current.name}</span>
           <span className="persona-btn-role">{current.role}</span>
@@ -47,7 +48,7 @@ export default function PersonaSwitcher({ persona, setPersona, setView }) {
             const p = PERSONAS[id];
             return (
               <button key={id} className="persona-item" role="menuitem" onClick={() => pick(id)}>
-                <span className="persona-avatar">{p.initials}</span>
+                <span className="persona-avatar" style={avatarStyle(p.name)}>{p.initials}</span>
                 <span className="persona-item-text">
                   <span className="persona-btn-name">{p.name}</span>
                   <span className="persona-btn-role">{p.role} · {p.org}</span>

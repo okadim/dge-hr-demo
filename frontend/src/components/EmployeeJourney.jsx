@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, Send, Sparkles, PenLine, Upload, PartyPopper, MapPin, CalendarDays, BadgeCheck, UserRound } from 'lucide-react';
+import { Check, Send, Sparkles, PenLine, Upload, PartyPopper, MapPin, CalendarDays, BadgeCheck, UserRound, FileClock } from 'lucide-react';
 import { Eyebrow, TaskIcon, TermsTable, CrewPlayer, AgentTag, AgentTypeChip, LockedNote, PersonaProfileCard } from './shared.jsx';
 import OfferReviewModal from './OfferReviewModal.jsx';
 
@@ -82,14 +82,29 @@ function OfferCard({ c, act, activity, busy }) {
   const o = c.offer;
   const [reviewOpen, setReviewOpen] = useState(false);
   if (['hr_review', 'awaiting_review'].includes(o.status)) {
+    const stepIdx = o.status === 'hr_review' ? 0 : 1;
     return (
       <div className="card">
         <Eyebrow>Conditional offer</Eyebrow>
-        <LockedNote>
-          {o.status === 'hr_review'
-            ? 'Your offer is being prepared — awaiting HR approval.'
-            : 'Your offer is approved by HR — awaiting manager approval.'}
-        </LockedNote>
+        <div className="empty-state">
+          <span className="empty-icon"><FileClock size={22} /></span>
+          <div className="empty-title">
+            {o.status === 'hr_review'
+              ? 'Your offer is being prepared — awaiting HR approval.'
+              : 'Your offer is approved by HR — awaiting manager approval.'}
+          </div>
+          <p className="empty-sub">
+            You'll be notified the moment HR and your manager approve it — nothing needed from you yet.
+          </p>
+          <div className="mini-steps">
+            {['Offer', 'Manager', 'You'].map((s, i) => (
+              <span key={s} className={`mini-step ${i < stepIdx ? 'mini-done' : i === stepIdx ? 'mini-current' : ''}`}>
+                <span className="mini-dot">{i < stepIdx && <Check size={9} />}</span>
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

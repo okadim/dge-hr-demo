@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, User, Users, Briefcase, BarChart3 } from 'lucide-react';
+import { ArrowRight, User, Users, Briefcase, BarChart3, Check as CheckIcon } from 'lucide-react';
 import { STAGES, stageStatus } from '../stages.js';
 import { Eyebrow, AgentCard, ModeChip } from './shared.jsx';
 
@@ -37,23 +37,25 @@ export default function ProcessOverview({ state, setView, setPersona }) {
 
       <section>
         <Eyebrow>New employee onboarding — end-to-end process map</Eyebrow>
-        <div className="stage-flow">
+        <div className="stepper">
           {STAGES.map((s, i) => {
             const st = stageStatus(s, c);
             return (
-              <div className="stage-flow-item" key={s.n}>
-                {i > 0 && <ArrowRight size={14} className="stage-arrow" />}
-                <button
-                  className={`stage-node stage-${st} ${selected === s.n ? 'stage-selected' : ''}`}
-                  onClick={() => setSelected(s.n)}
-                >
-                  <span className="stage-num">Step {i + 1}</span>
-                  <span className="stage-title">{s.title}</span>
-                  <span className={`stage-state stage-state-${st}`}>
-                    {st === 'done' ? 'Complete' : st === 'active' ? 'In progress' : 'Upcoming'}
-                  </span>
-                </button>
-              </div>
+              <button
+                key={s.n}
+                className={`stepper-item stepper-${st} ${selected === s.n ? 'stepper-selected' : ''}`}
+                onClick={() => setSelected(s.n)}
+              >
+                <span className="stepper-track">
+                  <span className={`stepper-seg ${i === 0 ? 'stepper-seg-hidden' : ''}`} />
+                  <span className="stepper-circle">{st === 'done' ? <CheckIcon size={14} /> : i + 1}</span>
+                  <span className={`stepper-seg ${i === STAGES.length - 1 ? 'stepper-seg-hidden' : ''}`} />
+                </span>
+                <span className="stepper-label">{s.title}</span>
+                <span className={`stage-state stage-state-${st}`}>
+                  {st === 'done' ? 'Complete' : st === 'active' ? 'In progress' : 'Upcoming'}
+                </span>
+              </button>
             );
           })}
         </div>

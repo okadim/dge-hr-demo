@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Bot, X, Check, Loader2 } from 'lucide-react';
-import { AgentTypeChip } from './shared.jsx';
+import { AgentTypeChip, avatarStyle } from './shared.jsx';
 import { PERSONAS } from '../personas.js';
 
 // Per-persona agent schema: only the crews that act in this user's part of
@@ -107,7 +107,7 @@ export default function AgentPanel({ state, activity, persona }) {
           <div className="agents-drawer-scroll">
             <ul className="tree-root-node">
               <li className="tree-persona">
-                <span className="persona-avatar tree-avatar">{who.initials}</span>
+                <span className="persona-avatar tree-avatar" style={avatarStyle(who.name)}>{who.initials}</span>
                 <span>
                   <span className="tree-persona-name">{who.name}</span>
                   <span className="tree-persona-role">{who.role}</span>
