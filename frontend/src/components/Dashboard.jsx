@@ -7,7 +7,7 @@ import { STAGES } from '../stages.js';
 // Verified against the file: 41 highlighted rows = 26 AI-managed + 10 system
 // + 5 stays-manual; 37 automatable tasks = 26 AI + 10 system + 1 human
 // decision (the 4 excluded stays-manual rows are external candidate actions).
-const SCOPE = { steps: 6, tasks: 37, ai: 26, oracle: 19, custom: 10, system: 10, human: 1, hours: 10.5 };
+const SCOPE = { steps: 7, tasks: 37, ai: 26, oracle: 19, custom: 10, system: 10, human: 1, hours: 10.5 };
 
 export default function Dashboard({ state, setView }) {
   const tiles = [

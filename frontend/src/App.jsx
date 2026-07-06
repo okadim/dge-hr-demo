@@ -87,7 +87,9 @@ export default function App() {
       const runs = next.last_runs || [];
       for (let i = 0; i < runs.length; i++) {
         setActivity({ action, runs, index: i });
-        await sleep(runs[i].type === 'system' ? 500 : runs[i].duration_ms || 1100);
+        // Agents get a fixed, visible 5s working beat (with a flash); system
+        // events stay quick.
+        await sleep(runs[i].type === 'system' ? 700 : 5000);
       }
       if (runs.length) {
         setActivity({ action, runs, index: runs.length });

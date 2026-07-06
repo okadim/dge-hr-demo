@@ -133,6 +133,9 @@ ROSTER = [
     {"key": "HCM_97",  "name": "Onboarding Metrics Maker",               "badge": CUSTOM, "activity": "8.2.2", "does": "Reviews task and training completion against the plan and highlights gaps."},
     {"key": "HCM_76",  "name": "Skill Recommendation Agent",             "badge": ORACLE, "activity": "8.3.2", "does": "Assesses current skills vs. role requirements and recommends additional learning."},
     {"key": "HCM_52",  "name": "My Learning Assistant",                  "badge": ORACLE, "activity": "8.3.2", "does": "Tracks recommended learning and training completion."},
+    {"key": "HCM_17",  "name": "Employee Goals Assistant",                 "badge": ORACLE, "activity": "7.1.1", "does": "Recommends SMART 30-60-90 day goals aligned to the role profile; the manager refines them."},
+    {"key": "HCM_83",  "name": "Team Goals Assistant",                     "badge": ORACLE, "activity": "7.1.1", "does": "Aligns the drafted goals with the team's objectives."},
+    {"key": "HCM_113", "name": "Goal Progress Insights",                   "badge": CUSTOM, "activity": "7.1.2", "does": "Checks alignment between the new hire's goals and cascaded org objectives, flagging gaps."},
     {"key": "HCM_81",  "name": "Talent Advisor (My Team)",               "badge": ORACLE, "activity": "8.4.1", "does": "Assembles team, goal, and attendance insight for the probation review."},
     {"key": "HCM_111", "name": "Performance Summary Generator",          "badge": CUSTOM, "activity": "8.4.1", "does": "Drafts the 90-day probation summary."},
 ]
@@ -247,6 +250,12 @@ CREWS = {
                     "Premier plan, 2 dependants covered."),
     ],
     "probation_compile": lambda: [
+        agent_step("HCM_17", "Recommending 30-60-90 day goals", 1100,
+                   "SMART goals drafted for Policy Analyst — aligned to the role profile; manager refined."),
+        agent_step("HCM_83", "Aligning goals with the team's objectives", 1100,
+                   "Goals aligned with the Economic Policy team's quarterly objectives."),
+        agent_step("HCM_113", "Checking alignment with cascaded org objectives", 1100,
+                   "No gaps — goals map cleanly to the department's cascaded objectives."),
         agent_step("HCM_153", "Generating compliance status report", 1100,
                    "Compliance report generated — 100% of mandatory training complete; zero overdue items."),
         agent_step("HCM_97", "Assessing onboarding progress against checklist", 1100,

@@ -47,6 +47,14 @@ export const STAGES = [
     ],
   },
   {
+    n: 7, title: 'Goal Setting & Role Enablement',
+    activities: [
+      { code: '7.1.1', persona: 'Manager', label: 'Manager drafts 30-60-90 day objectives', mode: 'ai', agents: ['HCM_17', 'HCM_83'], trigger: 'Start date confirmed' },
+      { code: '7.1.2', persona: 'HR', label: 'Align goals with department / org objectives', mode: 'ai', agents: ['HCM_113'], trigger: 'Goals drafted' },
+      { code: '7.1.3', persona: 'Employee', label: 'New hire acknowledges & accepts goals', mode: 'human' },
+    ],
+  },
+  {
     n: 8, title: 'Check-ins & Probation Review',
     activities: [
       { code: '8.2.2', persona: 'HR', label: 'Assess onboarding progress against checklist', mode: 'ai', agents: ['HCM_97'], trigger: 'Day-30 review' },
@@ -66,6 +74,7 @@ export function stageStatus(stage, c) {
     3: c.schedule.status === 'confirmed',
     4: c.benefits.status === 'enrolled',
     5: ['compiled', 'decided'].includes(c.probation.status),
+    7: ['compiled', 'decided'].includes(c.probation.status),
     8: c.probation.status === 'decided',
   };
   if (doneMap[stage.n]) return 'done';
@@ -75,6 +84,7 @@ export function stageStatus(stage, c) {
     3: c.schedule.status === 'proposed',
     4: ['open', 'flagged'].includes(c.benefits.status),
     5: c.probation.status === 'ready',
+    7: c.probation.status === 'ready',
     8: ['ready', 'compiled'].includes(c.probation.status),
   };
   return activeMap[stage.n] ? 'active' : 'upcoming';

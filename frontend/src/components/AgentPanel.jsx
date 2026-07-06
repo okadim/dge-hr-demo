@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bot, X, Check, Loader2 } from 'lucide-react';
 import { AgentTypeChip, avatarStyle } from './shared.jsx';
 import { PERSONAS } from '../personas.js';
@@ -25,6 +25,7 @@ const TREES = {
       }],
     },
     { crew: 'Schedule & equipment', agents: [{ key: 'HCM_73' }, { key: 'HCM_6' }] },
+    { crew: 'Goal setting', agents: [{ key: 'HCM_17' }, { key: 'HCM_83' }, { key: 'HCM_113' }] },
     {
       crew: 'Probation evidence',
       agents: [{ key: 'HCM_97' }, { key: 'HCM_76' }, { key: 'HCM_52' }, { key: 'HCM_81' }, { key: 'HCM_111' }],
@@ -47,6 +48,7 @@ function flatten(nodes) {
 
 export default function AgentPanel({ state, activity, persona }) {
   const [open, setOpen] = useState(false);
+  const [pinned, setPinned] = useState(false); // user opened it deliberately
   const byKey = Object.fromEntries(state.roster.map((a) => [a.key, a]));
   const tree = TREES[persona] || [];
   const personaKeys = tree.flatMap((c) => flatten(c.agents));
@@ -58,6 +60,16 @@ export default function AgentPanel({ state, activity, persona }) {
   const ranHere = personaKeys.filter((k) => ranKeys.has(k)).length;
   const activeHere = activeKey && personaKeys.includes(activeKey);
   const who = PERSONAS[persona];
+
+  // Pop the drawer open the moment an agent in this lens triggers so the
+  // audience sees the crew working; auto-close when the run finishes so it
+  // never blocks the next action. A manual open stays pinned until closed.
+  useEffect(() => {
+    if (activeHere) setOpen(true);
+    else if (!activity && !pinned) setOpen(false);
+  }, [activeHere, activity, pinned]);
+  const toggle = () => { const n = !open; setOpen(n); setPinned(n); };
+  const close = () => { setOpen(false); setPinned(false); };
 
   const Node = ({ node, depth }) => {
     const a = byKey[node.key];
@@ -88,7 +100,7 @@ export default function AgentPanel({ state, activity, persona }) {
     <>
       <button
         className={`agents-fab ${activeHere ? 'agents-fab-live' : ''}`}
-        onClick={() => setOpen(!open)}
+        onClick={toggle}
         aria-label="Show my agents"
         title="My agents — this lens"
       >
@@ -101,7 +113,7 @@ export default function AgentPanel({ state, activity, persona }) {
         <aside className="agents-drawer" aria-label="My agents">
           <div className="agents-drawer-head">
             <span className="eyebrow">Agents in this lens — live</span>
-            <button className="guide-close" onClick={() => setOpen(false)} aria-label="Close agent panel">
+            <button className="guide-close" onClick={close} aria-label="Close agent panel">
               <X size={14} />
             </button>
           </div>
