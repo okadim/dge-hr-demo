@@ -6,20 +6,22 @@ import EmployeeJourney from './components/EmployeeJourney.jsx';
 import ManagerView from './components/ManagerView.jsx';
 import HRJourney from './components/HRJourney.jsx';
 import ValueDelivered from './components/ValueDelivered.jsx';
+import Dashboard from './components/Dashboard.jsx';
 import PersonaSwitcher from './components/PersonaSwitcher.jsx';
 import Guide from './components/Guide.jsx';
 import AgentPanel from './components/AgentPanel.jsx';
 import dgeLogo from './assets/dge-logo.svg';
 
 const VIEWS = [
+  { id: 'dashboard', label: 'Dashboard' },
   { id: 'overview', label: 'Process Overview' },
   { id: 'journey', label: 'My Journey' },
-  { id: 'value', label: 'Value Delivered' },
+  { id: 'value', label: 'Agents Leaderboard' },
 ];
 
 export default function App() {
   const [state, setState] = useState(null);
-  const [view, setView] = useState('overview');
+  const [view, setView] = useState('dashboard');
   const [persona, setPersona] = useState('hr'); // the journey starts with HR
   const [activity, setActivity] = useState(null); // {action, runs, index}
   const [busy, setBusy] = useState(false);
@@ -181,6 +183,7 @@ export default function App() {
 
       <main className="main" ref={mainRef} tabIndex={-1}>
         <div className="tab-pane" key={`${view}-${view === 'journey' ? persona : ''}`}>
+          {view === 'dashboard' && <Dashboard {...shared} />}
           {view === 'overview' && <ProcessOverview {...shared} />}
           {view === 'journey' && persona === 'hr' && <HRJourney {...shared} />}
           {view === 'journey' && persona === 'manager' && <ManagerView {...shared} />}

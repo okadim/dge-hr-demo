@@ -7,7 +7,7 @@ const PERSONA_CARDS = [
   { persona: 'hr', icon: Briefcase, name: 'Salma Al Marzooqi', role: 'HR Recruiter', hint: 'Starts the journey: candidate dashboard, offer approval, data quality, compliance' },
   { persona: 'manager', icon: Users, name: 'Khalid Al Hammadi', role: 'Manager', hint: 'Offer approval, identity & schedule before day 1 — probation after' },
   { persona: 'employee', icon: User, name: 'Aisha Al Khoori', role: 'New hire — Policy Analyst', hint: 'Her profile, checklist, benefits, and assistant chat' },
-  { persona: null, icon: BarChart3, name: 'Value Delivered', role: 'The receipts', hint: 'Live counts, leaderboard, and what stays human' },
+  { persona: null, icon: BarChart3, name: 'Agents leaderboard', role: 'The receipts', hint: 'Live runs, hours saved, and what stays human' },
 ];
 
 export default function ProcessOverview({ state, setView, setPersona }) {

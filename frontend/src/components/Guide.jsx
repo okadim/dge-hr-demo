@@ -80,9 +80,9 @@ const STEPS = [
   {
     id: 'value',
     when: (c) => c.probation.status === 'decided',
-    persona: null, personaLabel: 'Value Delivered',
+    persona: null, personaLabel: 'Agents Leaderboard',
     target: () => null,
-    text: () => 'Journey complete — Value Delivered shows the live receipts: runs, hours saved, and what stays human.',
+    text: () => 'Journey complete — the Agents Leaderboard shows the live receipts: runs, hours saved, and what stays human.',
     done: true,
   },
 ];

@@ -1262,3 +1262,42 @@ body.guide-open .main { padding-bottom: 300px; }
 .call-chip { align-self: center; }
 
 .section-note { font-size: 12px; color: var(--ink-muted); margin: 4px 0 4px; max-width: 60ch; }
+
+
+/* ---------- overall dashboard ---------- */
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+.dash-tile { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.dash-icon {
+  width: 34px; height: 34px; border-radius: 9px; margin-bottom: 8px;
+  background: var(--card-hov); color: var(--ink-soft);
+  display: flex; align-items: center; justify-content: center;
+}
+.dash-value { font-size: 30px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.dash-label { font-size: 13px; color: var(--ink-soft); }
+.dash-sub { font-size: 11.5px; color: var(--ink-muted); }
+.dash-oracle .dash-icon { color: var(--orange); background: var(--orange-soft); }
+.dash-custom .dash-icon { color: var(--blue); background: var(--blue-soft); }
+.dash-system .dash-icon { color: var(--ink-muted); }
+.dash-human { border-left: 3px solid var(--amber); }
+.dash-human .dash-icon { color: var(--amber); background: var(--amber-soft); }
+.dash-green .dash-icon { color: var(--green); background: var(--green-soft); }
+.dash-green .dash-value { color: var(--green); }
+
+.dash-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.dash-step { display: flex; align-items: center; gap: 14px; text-align: left; transition: border-color var(--speed) ease, background var(--speed) ease, transform 120ms ease; }
+.dash-step:hover { border-color: var(--line-strong); background: var(--card-hov); transform: translateY(-2px); }
+.dash-step-num {
+  width: 30px; height: 30px; border-radius: 50%; flex: none;
+  background: var(--acc-soft); color: var(--acc-light); font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+}
+.dash-step-title { font-size: 14px; font-weight: 600; }
+.dash-step-meta { font-size: 12px; color: var(--ink-muted); }
+.dash-step-go { color: var(--ink-muted); margin-left: auto; flex: none; }
+
+.dash-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.dash-link { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; transition: border-color var(--speed) ease, background var(--speed) ease, transform 120ms ease; }
+.dash-link:hover { border-color: var(--line-strong); background: var(--card-hov); transform: translateY(-2px); }
+.dash-link-title { font-size: 15px; font-weight: 600; }
+.dash-link-sub { font-size: 12.5px; color: var(--ink-muted); }
+.dash-link .persona-go { margin-top: 8px; }
