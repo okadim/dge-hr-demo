@@ -1129,3 +1129,31 @@ section { display: flex; flex-direction: column; gap: 12px; }
 .mini-done { color: var(--ink-soft); }
 .mini-current .mini-dot { border-color: var(--acc); background: var(--acc-soft); animation: pulse 1.4s ease-in-out infinite; }
 .mini-current { color: var(--ink); font-weight: 600; }
+
+
+/* ---------- Loom-style "show me where" click pointer ---------- */
+.guide-pointer { position: fixed; z-index: 60; pointer-events: none; }
+.guide-cursor {
+  position: relative; z-index: 2; display: block;
+  color: var(--acc-light); fill: var(--acc);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  animation: cursor-tap 0.9s ease-in-out 3;
+  transform-origin: 20% 10%;
+}
+@keyframes cursor-tap {
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(0.82); }
+  55% { transform: scale(1.05); }
+}
+.guide-click-ring {
+  position: absolute; left: 3px; top: 2px; width: 14px; height: 14px;
+  border: 2px solid var(--acc); border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: click-ripple 0.9s ease-out 3;
+  opacity: 0;
+}
+.guide-click-ring-2 { animation-delay: 0.18s; border-color: var(--acc-light); }
+@keyframes click-ripple {
+  0% { opacity: 0.9; width: 10px; height: 10px; }
+  100% { opacity: 0; width: 52px; height: 52px; }
+}

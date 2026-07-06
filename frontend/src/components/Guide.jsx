@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Compass, X, ArrowRight, Check, MousePointerClick, GripHorizontal } from 'lucide-react';
+import { Compass, X, ArrowRight, Check, MousePointerClick, GripHorizontal, MousePointer2 } from 'lucide-react';
 
 // "Next step" coach: reads the shared journey state, tells the user what to do
 // next, and — once they're on the right screen — highlights the exact control
@@ -90,7 +90,11 @@ const STEPS = [
 export default function Guide({ state, view, persona, setView, setPersona, activity }) {
   const [hidden, setHidden] = useState(false);
   const [pos, setPos] = useState(null); // set once the user drags the popup
+  const [pointer, setPointer] = useState(null); // Loom-style click pointer {x, y}
   const cardRef = useRef(null);
+  const pointerTimers = useRef([]);
+
+  useEffect(() => () => pointerTimers.current.forEach(clearTimeout), []);
 
   // Drag to move — the popup floats and can cover content, so let the user
   // park it anywhere. Buttons inside stay clickable (drag starts elsewhere).
@@ -143,7 +147,16 @@ export default function Guide({ state, view, persona, setView, setPersona, activ
     const el =
       (targetKey && document.querySelector(`[data-guide="${targetKey}"]`)) ||
       (step.fallback && document.querySelector(`[data-guide="${step.fallback}"]`));
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    pointerTimers.current.forEach(clearTimeout);
+    pointerTimers.current = [
+      setTimeout(() => {
+        const r = el.getBoundingClientRect();
+        setPointer({ x: r.left + r.width * 0.72, y: r.top + r.height * 0.68 });
+      }, 480),
+      setTimeout(() => setPointer(null), 3400),
+    ];
   };
 
   return (
@@ -164,6 +177,13 @@ export default function Guide({ state, view, persona, setView, setPersona, activ
         </button>
       </div>
       <p className="guide-text">{step.text(c)}</p>
+      {pointer && (
+        <span className="guide-pointer" style={{ left: pointer.x, top: pointer.y }} aria-hidden="true">
+          <span className="guide-click-ring" />
+          <span className="guide-click-ring guide-click-ring-2" />
+          <MousePointer2 size={26} className="guide-cursor" />
+        </span>
+      )}
       {here ? (
         step.done ? (
           <span className="guide-here"><Check size={12} /> Journey complete</span>
