@@ -32,6 +32,24 @@ export default function App() {
   const logoRef = useRef(null);
   const mainRef = useRef(null);
   const firstRender = useRef(true);
+  const stateRef = useRef(null);
+  const busyRef = useRef(false);
+  stateRef.current = state;
+  busyRef.current = busy;
+
+  // The journey state is shared across every open tab/viewer. Poll for a
+  // revision change so this tab never acts on a stale world (the source of
+  // "offer must be dispatched" while the guide says step 3).
+  useEffect(() => {
+    const id = setInterval(async () => {
+      if (busyRef.current || document.hidden) return;
+      try {
+        const next = await fetchState();
+        if (!busyRef.current && next.rev !== stateRef.current?.rev) setState(next);
+      } catch { /* transient network blip — next tick retries */ }
+    }, 4000);
+    return () => clearInterval(id);
+  }, []);
 
   // Cached images can be complete before onLoad attaches — check once on mount.
   useEffect(() => {
@@ -88,7 +106,14 @@ export default function App() {
       setState(next);
     } catch (e) {
       setActivity(null);
-      setError(e.message);
+      // The shared journey may have moved on (another tab / a restart).
+      // Re-sync immediately so the guide and buttons match reality again.
+      try {
+        setState(await fetchState());
+        setError(`${e.message} — the journey moved on elsewhere, so this view just refreshed.`);
+      } catch {
+        setError(e.message);
+      }
     } finally {
       setBusy(false);
     }

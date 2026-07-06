@@ -191,6 +191,7 @@ def seed():
 
 
 STATE = seed()
+REV = 0  # bumped on every successful action — lets clients detect staleness
 
 
 def _task(state, tid, status):
@@ -263,6 +264,7 @@ def serialize(last_runs=None):
             "hours_saved": hours,
         },
         "last_runs": copy.deepcopy(last_runs or []),
+        "rev": REV,
     }
 
 
@@ -481,7 +483,9 @@ ACTIONS = {
 
 
 def do_action(name, body):
+    global REV
     if name not in ACTIONS:
         raise ActionError(f"Unknown action '{name}'.")
     runs = ACTIONS[name](body or {})
+    REV += 1
     return serialize(last_runs=runs)
