@@ -35,46 +35,62 @@ export default function ManagerView({ state, act, activity, busy }) {
         <div className="journey-right">
       <Readiness c={c} />
 
-      <section>
-        <div className="phase-head phase-head-ruled">
-          <Eyebrow>Before day 1</Eyebrow>
-        </div>
-        <div className="two-col">
-          <div className="col">
-            <OfferReview c={c} act={act} activity={activity} busy={busy} />
-            <IdentityPipeline state={state} act={act} activity={activity} busy={busy} />
-            <ScheduleCard c={c} act={act} activity={activity} busy={busy} />
-          </div>
-          <div className="col">
-            <StatusUpdates c={c} />
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div className="phase-head phase-head-ruled">
-          <Eyebrow>Day 1 onwards</Eyebrow>
-          <Cadence decided={p.status === 'decided'} />
-        </div>
-        <div className="two-col">
-          <div className="col">
-            <EvidenceCard p={p} act={act} activity={activity} busy={busy} />
-          </div>
-          <div className="col">
-            {p.status === 'compiled' && <DecisionCard act={act} busy={busy} />}
-            {p.status === 'decided' && <ClosedCard c={c} />}
-            {['locked', 'ready'].includes(p.status) && (
-              <div className="card">
-                <div className="card-head-row">
-                  <Eyebrow>Decision — probation outcome</Eyebrow>
-                  <Badge kind="Human authority" />
-                </div>
-                <LockedNote>The probation decision opens once the day-90 evidence pack is compiled.</LockedNote>
+      {[
+        // active phase floats to the top — whichever holds the current work
+        {
+          key: 'day1',
+          active: p.status !== 'locked',
+          node: (
+            <section>
+              <div className="phase-head phase-head-ruled">
+                <Eyebrow>Day 1 onwards</Eyebrow>
+                <Cadence decided={p.status === 'decided'} />
               </div>
-            )}
-          </div>
-        </div>
-      </section>
+              <div className="two-col">
+                <div className="col">
+                  <EvidenceCard p={p} act={act} activity={activity} busy={busy} />
+                </div>
+                <div className="col">
+                  {p.status === 'compiled' && <DecisionCard act={act} busy={busy} />}
+                  {p.status === 'decided' && <ClosedCard c={c} />}
+                  {['locked', 'ready'].includes(p.status) && (
+                    <div className="card">
+                      <div className="card-head-row">
+                        <Eyebrow>Decision — probation outcome</Eyebrow>
+                        <Badge kind="Human authority" />
+                      </div>
+                      <LockedNote>The probation decision opens once the day-90 evidence pack is compiled.</LockedNote>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          ),
+        },
+        {
+          key: 'before',
+          active: p.status === 'locked',
+          node: (
+            <section>
+              <div className="phase-head phase-head-ruled">
+                <Eyebrow>Before day 1</Eyebrow>
+              </div>
+              <div className="two-col">
+                <div className="col">
+                  <OfferReview c={c} act={act} activity={activity} busy={busy} />
+                  <IdentityPipeline state={state} act={act} activity={activity} busy={busy} />
+                  <ScheduleCard c={c} act={act} activity={activity} busy={busy} />
+                </div>
+                <div className="col">
+                  <StatusUpdates c={c} />
+                </div>
+              </div>
+            </section>
+          ),
+        },
+      ]
+        .sort((a, b) => (b.active ? 1 : 0) - (a.active ? 1 : 0))
+        .map((ph) => <div key={ph.key}>{ph.node}</div>)}
         </div>
       </div>
     </div>

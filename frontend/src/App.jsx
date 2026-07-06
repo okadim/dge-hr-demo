@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Undo2 } from 'lucide-react';
 import { fetchState, postAction, sleep } from './api.js';
 import ProcessOverview from './components/ProcessOverview.jsx';
 import EmployeeJourney from './components/EmployeeJourney.jsx';
@@ -153,6 +153,15 @@ export default function App() {
             </span>
           </div>
           <div className="header-right">
+            <button
+              className="btn btn-ghost btn-reset"
+              onClick={() => act('undo')}
+              disabled={busy || !state.can_undo}
+              title="Step back one action"
+              aria-label="Step back"
+            >
+              <Undo2 size={13} /> <span className="reset-label">Step back</span>
+            </button>
             <button
               className="btn btn-ghost btn-reset"
               onClick={() => act('reset')}

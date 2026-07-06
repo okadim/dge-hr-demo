@@ -195,6 +195,7 @@ def seed():
 
 STATE = seed()
 REV = 0  # bumped on every successful action — lets clients detect staleness
+HISTORY = []  # snapshots for step-back / undo
 
 
 def _task(state, tid, status):
@@ -252,6 +253,7 @@ def serialize(last_runs=None):
         "case": copy.deepcopy({k: v for k, v in s.items() if k not in ("agent_runs", "background_hires")}),
         "agent_runs": copy.deepcopy(s["agent_runs"]),
         "background_hires": s["background_hires"],
+        "can_undo": len(HISTORY) > 0,
         "kpis": {
             "journey_pct": round(100 * done / len(tasks)),
             "agent_runs": sum(1 for r in s["agent_runs"] if r["type"] == "agent"),
@@ -479,8 +481,17 @@ def decide(body):
 
 
 def reset(body):
-    global STATE
+    global STATE, HISTORY
     STATE = seed()
+    HISTORY = []
+    return []
+
+
+def undo(body):
+    global STATE
+    if not HISTORY:
+        raise ActionError("Nothing to step back to.")
+    STATE = HISTORY.pop()
     return []
 
 
@@ -497,6 +508,7 @@ ACTIONS = {
     "upload-eid": upload_eid,
     "compile-probation": compile_probation,
     "decide": decide,
+    "undo": undo,
     "reset": reset,
 }
 
@@ -505,6 +517,11 @@ def do_action(name, body):
     global REV
     if name not in ACTIONS:
         raise ActionError(f"Unknown action '{name}'.")
+    # snapshot before any state-changing action so the user can step back
+    if name not in ("undo", "reset"):
+        HISTORY.append(copy.deepcopy(STATE))
+        if len(HISTORY) > 60:
+            HISTORY.pop(0)
     runs = ACTIONS[name](body or {})
     REV += 1
     return serialize(last_runs=runs)

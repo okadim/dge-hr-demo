@@ -1,4 +1,4 @@
-import { Layers, ListChecks, Bot, Boxes, Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react';
+import { Layers, ListChecks, Bot, Zap, ShieldCheck, Clock, ArrowRight, Gauge, Sparkles, Cpu, Building2 } from 'lucide-react';
 import { Eyebrow } from './shared.jsx';
 import { STAGES } from '../stages.js';
 
@@ -19,10 +19,36 @@ export default function Dashboard({ state, setView }) {
     { icon: Clock, value: `${SCOPE.hours.toFixed(1)}h`, label: 'Hours saved per hire', sub: 'LLM-estimated', accent: 'green' },
   ];
 
+  const automated = SCOPE.ai + SCOPE.system;          // agent + workflow
+  const pctAutomated = Math.round((automated / SCOPE.tasks) * 100);
+  const pctAgent = Math.round((SCOPE.ai / SCOPE.tasks) * 100);
+  const agentsTotal = SCOPE.oracle + SCOPE.custom;
+  const pctOracle = Math.round((SCOPE.oracle / agentsTotal) * 100);
+  const metrics = [
+    { icon: Gauge, value: `${pctAutomated}%`, label: 'Automated', sub: `${automated} of ${SCOPE.tasks} tasks` },
+    { icon: Sparkles, value: `${pctAgent}%`, label: 'AI-agent driven', sub: `${SCOPE.ai} of ${SCOPE.tasks} tasks`, accent: 'oracle' },
+    { icon: Cpu, value: automated, label: 'Tasks automated', sub: `${SCOPE.ai} agent · ${SCOPE.system} system` },
+    { icon: Building2, value: `${pctOracle}%`, label: 'Oracle-driven', sub: `${SCOPE.oracle} of ${agentsTotal} agents`, accent: 'oracle' },
+  ];
+
   return (
     <div className="view">
       <section>
-        <Eyebrow>New employee onboarding — at a glance</Eyebrow>
+        <Eyebrow>How agentified — automation at a glance</Eyebrow>
+        <div className="dash-grid">
+          {metrics.map((t) => (
+            <div key={t.label} className={`card dash-tile ${t.accent ? `dash-${t.accent}` : ''}`}>
+              <span className="dash-icon"><t.icon size={18} /></span>
+              <div className="dash-value">{t.value}</div>
+              <div className="dash-label">{t.label}</div>
+              {t.sub && <div className="dash-sub">{t.sub}</div>}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <Eyebrow>Scope — from the client's mapping</Eyebrow>
         <div className="dash-grid">
           {tiles.map((t) => (
             <div key={t.label} className={`card dash-tile ${t.accent ? `dash-${t.accent}` : ''}`}>
