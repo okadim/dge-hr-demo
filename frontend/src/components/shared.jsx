@@ -10,25 +10,10 @@ const BADGE_CLASS = {
   'Human authority': 'badge badge-human',
 };
 
-// Deterministic per-person avatar colors (hash name -> hue): soft tint bg +
-// saturated initials, HiBob-style people color.
-const AV_PALETTE = [
-  ['rgba(248, 113, 113, 0.16)', '#F87171'],  // coral
-  ['rgba(96, 165, 250, 0.16)', '#60A5FA'],   // blue
-  ['rgba(45, 212, 191, 0.16)', '#2DD4BF'],   // teal
-  ['rgba(167, 139, 250, 0.16)', '#A78BFA'],  // violet
-  ['rgba(251, 191, 36, 0.16)', '#FBBF24'],   // amber
-  ['rgba(74, 222, 128, 0.16)', '#4ADE80'],   // green
-];
-const AV_FIXED = { Salma: 0, Khalid: 1, Aisha: 2, Omar: 3, Fatima: 4, Yousef: 5 };
-export function avatarStyle(name) {
-  const first = (name || '').split(' ')[0];
-  let i = AV_FIXED[first];
-  if (i === undefined) {
-    i = [...(name || '')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 6, 0);
-  }
-  const [bg, fg] = AV_PALETTE[i];
-  return { background: bg, color: fg };
+// Uniform brand avatar for every persona — the purple mark, white initials
+// (the multicolor per-person palette read wrong, e.g. red for HR).
+export function avatarStyle() {
+  return { background: 'linear-gradient(135deg, var(--acc-deep), var(--acc))', color: '#fff' };
 }
 
 export function Badge({ kind }) {
