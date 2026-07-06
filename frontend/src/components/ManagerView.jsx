@@ -165,17 +165,15 @@ function Readiness({ c }) {
         <span className="readiness-title">Day-1 readiness</span>
         <span className="readiness-count">{doneCount} of {items.length} ready</span>
       </div>
-      <div className="readiness-track">
-        {items.map(([label, st]) => (
-          <span key={label} className={`readiness-seg ${st === 'done' ? 'readiness-seg-done' : ''}`} />
-        ))}
-      </div>
-      <div className="readiness-row">
+      <div className="readiness-grid">
         {items.map(([label, st, target]) => (
-          <button key={label} className={`ready-chip ready-${st}`} onClick={() => jump(target)} title="Jump to this card">
-            {st === 'done' ? <CheckCircle2 size={13} /> : st === 'active' ? <Loader2 size={13} className="spin-slow" /> : <Lock size={11} />}
-            {label}
-          </button>
+          <div key={label} className="readiness-cell">
+            <button className={`ready-chip ready-${st}`} onClick={() => jump(target)} title="Jump to this card">
+              {st === 'done' ? <CheckCircle2 size={13} /> : st === 'active' ? <Loader2 size={13} className="spin-slow" /> : <Lock size={11} />}
+              {label}
+            </button>
+            <span className={`readiness-seg readiness-seg-${st}`} />
+          </div>
         ))}
       </div>
     </div>
