@@ -1,54 +1,45 @@
-import { Layers, ListChecks, Bot, Zap, ShieldCheck, Clock, ArrowRight, Gauge, Sparkles, Cpu, Building2 } from 'lucide-react';
+import { Layers, ListChecks, Gauge, Sparkles, Building2, UserCheck, Clock, ArrowRight } from 'lucide-react';
 import { Eyebrow } from './shared.jsx';
 import { STAGES } from '../stages.js';
 
-// One overall view: the full scope from the client's mapping (green + yellow
-// highlighted rows of New_Employee_Onboarding_Process_Hierarchy_V1_2.xlsx).
-// Verified against the file: 41 highlighted rows = 26 AI-managed + 10 system
-// + 5 stays-manual; 37 automatable tasks = 26 AI + 10 system + 1 human
-// decision (the 4 excluded stays-manual rows are external candidate actions).
-const SCOPE = { steps: 7, tasks: 37, ai: 26, oracle: 19, custom: 10, system: 10, human: 1, hours: 10.5 };
+// One overall view: the level of agentification of the whole onboarding
+// process, from the client's mapping (New_Employee_Onboarding_Process_
+// Hierarchy_V1_2.xlsx). Verified against the file: 41 highlighted rows =
+// 26 AI-managed + 10 system + 5 stays-manual; 37 automatable tasks =
+// 26 AI + 10 system + 1 human-decision task.
+//
+// human = human-in-the-loop approval / sign-off gates across the journey
+//   (HR offer review, manager offer approval, candidate e-sign, manager
+//    access approval, manager schedule/equipment approval, employee benefits
+//    selection, employee goal acknowledgement, manager probation confirmation).
+// daysSaved = LLM-estimated end-to-end time incl. eliminated manual waiting
+//   (ticket queues, approval loops, external checks), on top of ~10.5h effort.
+const SCOPE = {
+  steps: 7, tasks: 37, ai: 26, oracle: 19, custom: 10, system: 10,
+  human: 8, hoursActive: 10.5, daysSaved: 6,
+};
 
 export default function Dashboard({ state, setView }) {
-  const tiles = [
-    { icon: Layers, value: SCOPE.steps, label: 'Key process steps' },
-    { icon: ListChecks, value: SCOPE.tasks, label: 'Tasks in scope', sub: 'green + yellow in the mapping' },
-    { icon: Bot, value: SCOPE.ai, label: 'AI-agent managed', sub: `${SCOPE.oracle} Oracle · ${SCOPE.custom} custom agents`, accent: 'oracle' },
-    { icon: Zap, value: SCOPE.system, label: 'System automations', sub: 'run by the workflow itself', accent: 'system' },
-    { icon: ShieldCheck, value: SCOPE.human, label: 'Human decision', sub: 'probation confirmation', accent: 'human' },
-    { icon: Clock, value: `${SCOPE.hours.toFixed(1)}h`, label: 'Hours saved per hire', sub: 'LLM-estimated', accent: 'green' },
-  ];
-
-  const automated = SCOPE.ai + SCOPE.system;          // agent + workflow
+  const automated = SCOPE.ai + SCOPE.system;
   const pctAutomated = Math.round((automated / SCOPE.tasks) * 100);
   const pctAgent = Math.round((SCOPE.ai / SCOPE.tasks) * 100);
   const agentsTotal = SCOPE.oracle + SCOPE.custom;
   const pctOracle = Math.round((SCOPE.oracle / agentsTotal) * 100);
-  const metrics = [
-    { icon: Gauge, value: `${pctAutomated}%`, label: 'Automated', sub: `${automated} of ${SCOPE.tasks} tasks` },
+
+  const tiles = [
+    { icon: Gauge, value: `${pctAutomated}%`, label: 'Automated', sub: `${automated} of ${SCOPE.tasks} tasks`, accent: 'green' },
     { icon: Sparkles, value: `${pctAgent}%`, label: 'AI-agent driven', sub: `${SCOPE.ai} of ${SCOPE.tasks} tasks`, accent: 'oracle' },
-    { icon: Cpu, value: automated, label: 'Tasks automated', sub: `${SCOPE.ai} agent · ${SCOPE.system} system` },
-    { icon: Building2, value: `${pctOracle}%`, label: 'Oracle-driven', sub: `${SCOPE.oracle} of ${agentsTotal} agents`, accent: 'oracle' },
+    { icon: Building2, value: `${pctOracle}%`, label: 'Oracle-driven', sub: `${SCOPE.oracle} Oracle · ${SCOPE.custom} custom agents`, accent: 'oracle' },
+    { icon: Layers, value: SCOPE.steps, label: 'Process steps' },
+    { icon: ListChecks, value: SCOPE.tasks, label: 'Tasks in scope', sub: 'from the client’s mapping' },
+    { icon: UserCheck, value: SCOPE.human, label: 'Human approvals', sub: 'review & sign-off gates', accent: 'human' },
+    { icon: Clock, value: `~${SCOPE.daysSaved} days`, label: 'Faster to productive', sub: `${SCOPE.hoursActive}h effort + eliminated waiting · LLM-estimated`, accent: 'green' },
   ];
 
   return (
     <div className="view">
       <section>
-        <Eyebrow>How agentified — automation at a glance</Eyebrow>
-        <div className="dash-grid">
-          {metrics.map((t) => (
-            <div key={t.label} className={`card dash-tile ${t.accent ? `dash-${t.accent}` : ''}`}>
-              <span className="dash-icon"><t.icon size={18} /></span>
-              <div className="dash-value">{t.value}</div>
-              <div className="dash-label">{t.label}</div>
-              {t.sub && <div className="dash-sub">{t.sub}</div>}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <Eyebrow>Scope — from the client's mapping</Eyebrow>
+        <Eyebrow>Level of agentification</Eyebrow>
         <div className="dash-grid">
           {tiles.map((t) => (
             <div key={t.label} className={`card dash-tile ${t.accent ? `dash-${t.accent}` : ''}`}>
@@ -62,7 +53,7 @@ export default function Dashboard({ state, setView }) {
       </section>
 
       <section>
-        <Eyebrow>The six process steps</Eyebrow>
+        <Eyebrow>The seven process steps</Eyebrow>
         <div className="dash-steps">
           {STAGES.map((s, i) => (
             <button key={s.n} className="card dash-step" onClick={() => setView('overview')}>

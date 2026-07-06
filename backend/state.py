@@ -71,7 +71,7 @@ CHAT_CONTEXT = (
     "You are an agent inside a fictional Oracle HCM onboarding demo for DGE (Abu Dhabi). "
     "You are chatting with Aisha Al Khoori, a new hire: Policy Analyst, Grade 8, Dept. of "
     "Economic Development, manager Khalid Al Hammadi, start date Sunday 2 August 2026, "
-    "employee number E-2026-4417 once hired, schedule Sun–Thu 8:00–16:00 hybrid at Al Maqam "
+    "employee number E-2026-4417 once hired, schedule Sun–Thu 8:00–16:00 hybrid at twofour54 Building 6, Al Muntazah, "
     "Tower, Abu Dhabi. Base salary AED 28,000/month plus housing allowance, paid at the end of "
     "each calendar month. Her buddy is Noura Al Suwaidi. All data is fictional demo data. "
     "Answer in 2–3 short sentences, warm and professional, no markdown, no lists. Never say "
@@ -133,7 +133,7 @@ def seed():
             "call_requested": False,
         },
         "welcome_pack": {"ready": False, "items": [
-            {"title": "Day 1 logistics", "text": "Sunday 2 Aug, 8:00 · Al Maqam Tower reception · smart business dress · parking level P2"},
+            {"title": "Day 1 logistics", "text": "Sunday 2 Aug, 8:00 · twofour54 Building 6 reception · smart business dress · visitor parking"},
             {"title": "Your buddy", "text": "Noura Al Suwaidi — Senior Policy Analyst · noura.alsuwaidi@dge.gov.ae"},
             {"title": "Org chart", "text": "Economic Policy team — 12 people, reporting to Khalid Al Hammadi"},
             {"title": "Reading list", "text": "Abu Dhabi Economic Vision · DGE service standards · current SME licensing study"},
@@ -158,7 +158,7 @@ def seed():
             "equipment": None,
             "trainings": None,
             "proposed": {"days": "Sun–Thu", "hours": "8:00–16:00", "mode": "Hybrid (2 days remote)",
-                         "location": "Al Maqam Tower, Abu Dhabi"},
+                         "location": "twofour54, Building 6 · Al Muntazah, Abu Dhabi"},
             "final": None,
         },
         "benefits": {

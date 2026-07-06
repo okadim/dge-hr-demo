@@ -61,7 +61,7 @@ export default function EmployeeJourney({ state, act, activity, busy }) {
 function ProfileCard({ c }) {
   const e = c.employee;
   const facts = [
-    { icon: MapPin, text: 'Al Maqam Tower, Abu Dhabi' },
+    { icon: MapPin, text: 'twofour54, Building 6 · Al Muntazah, Abu Dhabi' },
     { icon: UserRound, text: `Manager — ${e.manager}` },
     { icon: CalendarDays, text: `Starts ${e.start_date}` },
   ];

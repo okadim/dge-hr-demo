@@ -23,7 +23,7 @@ export default function HRJourney({ state, act, activity, busy }) {
             title={hr.role}
             facts={[
               { icon: Briefcase, text: hr.org },
-              { icon: MapPin, text: 'Al Maqam Tower, Abu Dhabi' },
+              { icon: MapPin, text: 'twofour54, Building 6 · Al Muntazah, Abu Dhabi' },
               { icon: UsersIcon, text: '4 candidates onboarding this month' },
             ]}
             skills={['Talent acquisition', 'Onboarding operations', 'UAE labour policy', 'Arabic · English']}

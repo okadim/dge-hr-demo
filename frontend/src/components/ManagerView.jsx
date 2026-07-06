@@ -22,7 +22,7 @@ export default function ManagerView({ state, act, activity, busy }) {
             pronoun="He/Him"
             title={m.role}
             facts={[
-              { icon: MapPin, text: 'Al Maqam Tower, Abu Dhabi' },
+              { icon: MapPin, text: 'twofour54, Building 6 · Al Muntazah, Abu Dhabi' },
               { icon: UsersIcon, text: 'Economic Policy team — 12 people' },
               { icon: UserRound, text: 'Onboarding: Aisha Al Khoori — Policy Analyst' },
               { icon: CalendarDays, text: `Aisha starts ${c.employee.start_date}` },

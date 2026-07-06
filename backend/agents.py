@@ -192,7 +192,7 @@ CREWS = {
         agent_step("HCM_146", "Assembling personalised welcome pack", 1300,
                    "Welcome pack ready: Day 1 logistics, org chart, buddy contact, and a reading list for Policy Analyst."),
         agent_step("HCM_55", "Attaching first-day instructions & checklist", 1000,
-                   "First-day instructions attached: arrival 8:00, Al Maqam Tower reception, dress code, parking."),
+                   "First-day instructions attached: arrival 8:00, twofour54 Building 6 reception, dress code, parking."),
     ],
     "submit_details": lambda: [
         agent_step("HCM_67", "Validating bank, tax & emergency contact entries", 1300,
@@ -220,13 +220,13 @@ CREWS = {
     ],
     "schedule_confirm": lambda adjusted: [
         agent_step("HCM_73", "Proposing schedule & location from position profile", 1100,
-                   "Proposed: Sun–Thu, 8:00–16:00, hybrid (2 days remote) · Al Maqam Tower, Abu Dhabi."),
+                   "Proposed: Sun–Thu, 8:00–16:00, hybrid (2 days remote) · twofour54, Building 6 · Al Muntazah, Abu Dhabi."),
         agent_step("HCM_6", "Applying the manager's confirmation", 1000,
                    ("Manager adjustment applied: Sun–Thu, 8:30–16:30, hybrid (2 days remote)."
                     if adjusted else
                     "Schedule confirmed as proposed: Sun–Thu, 8:00–16:00, hybrid (2 days remote).")),
         system_step("3.2.3", "Track equipment delivery & confirm receipt",
-                    "Equipment delivery tracked — laptop & peripherals delivered to Al Maqam Tower; receipt confirmed."),
+                    "Equipment delivery tracked — laptop & peripherals delivered to twofour54 Building 6; receipt confirmed."),
     ],
     "benefits_enrol": lambda: [
         system_step("4.1.1", "Trigger new-hire enrolment event",
