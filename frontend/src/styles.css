@@ -70,7 +70,7 @@ strong { font-weight: 600; }
   position: sticky; top: 0; z-index: 30;
 }
 .header-inner {
-  max-width: 1920px; margin: 0 auto; padding: 14px clamp(20px, 2.5vw, 52px) 8px;
+  max-width: 1920px; margin: 0 auto; padding: 10px clamp(20px, 2.5vw, 52px) 6px;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
 .wordmark { font-weight: 600; font-size: 16.5px; letter-spacing: -0.01em; }
@@ -92,15 +92,14 @@ strong { font-weight: 600; }
   color: var(--ink-muted); font-weight: 400; white-space: nowrap;
 }
 
-.header-right { display: flex; align-items: center; gap: 18px; }
+.header-right { display: flex; align-items: center; gap: 16px; }
 /* Official logo on a light chip — never recolor a government brand mark */
 .dge-logo-chip {
-  background: #fff; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center;
-  box-shadow: var(--shadow);
-  opacity: 0; transition: opacity 300ms ease; /* fades in once the logo image loads */
+  background: #fff; border-radius: 10px; border: 1px solid var(--line);
+  height: 52px; padding: 12px 18px;
+  display: flex; align-items: center; flex: none;
 }
-.dge-logo-chip.is-loaded { opacity: 1; }
-.dge-logo { height: 24px; width: auto; display: block; }
+.dge-logo { width: 150px; height: 36px; object-fit: contain; display: block; }
 .dge-logo-text { font-size: 11px; color: var(--ink-muted); max-width: 180px; text-align: right; line-height: 1.35; }
 
 .tabs {
@@ -1218,3 +1217,9 @@ body.guide-open .main { padding-bottom: 300px; }
 
 /* hours list: label starts at the content edge; tick rides with the value */
 .hours-tick { width: 18px; flex: none; color: var(--green); display: flex; justify-content: flex-end; }
+
+
+/* tight header widths: drop the switcher subtitle before anything collides */
+@media (max-width: 1360px) {
+  .persona-btn-role { display: none; }
+}

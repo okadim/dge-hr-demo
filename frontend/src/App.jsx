@@ -9,15 +9,13 @@ import ValueDelivered from './components/ValueDelivered.jsx';
 import PersonaSwitcher from './components/PersonaSwitcher.jsx';
 import Guide from './components/Guide.jsx';
 import AgentPanel from './components/AgentPanel.jsx';
+import dgeLogo from './assets/dge-logo.svg';
 
 const VIEWS = [
   { id: 'overview', label: 'Process Overview' },
   { id: 'journey', label: 'My Journey' },
   { id: 'value', label: 'Value Delivered' },
 ];
-
-const LOGO_URL =
-  'https://www.dge.gov.ae/-/media/sites/dge/logo/department-of-government-enablement.ashx?iar=0&hash=5C62F2CBBD7067AFCA916DDFDEE3EA04';
 
 export default function App() {
   const [state, setState] = useState(null);
@@ -27,9 +25,6 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [offline, setOffline] = useState(false);
-  const [logoOk, setLogoOk] = useState(true);
-  const [logoLoaded, setLogoLoaded] = useState(false);
-  const logoRef = useRef(null);
   const mainRef = useRef(null);
   const firstRender = useRef(true);
   const stateRef = useRef(null);
@@ -49,12 +44,6 @@ export default function App() {
       } catch { /* transient network blip — next tick retries */ }
     }, 4000);
     return () => clearInterval(id);
-  }, []);
-
-  // Cached images can be complete before onLoad attaches — check once on mount.
-  useEffect(() => {
-    const img = logoRef.current;
-    if (img && img.complete && img.naturalWidth > 0) setLogoLoaded(true);
   }, []);
 
   // Focus the content region on navigation (skill: focus-on-route-change) —
@@ -170,20 +159,9 @@ export default function App() {
               <RotateCcw size={13} /> <span className="reset-label">Restart journey</span>
             </button>
             <PersonaSwitcher persona={persona} setPersona={setPersona} setView={setView} />
-            {logoOk ? (
-              <span className={`dge-logo-chip ${logoLoaded ? 'is-loaded' : ''}`}>
-                <img
-                  ref={logoRef}
-                  className="dge-logo"
-                  src={LOGO_URL}
-                  alt="Department of Government Enablement"
-                  onLoad={() => setLogoLoaded(true)}
-                  onError={() => setLogoOk(false)}
-                />
-              </span>
-            ) : (
-              <span className="dge-logo-text">Department of Government Enablement</span>
-            )}
+            <span className="dge-logo-chip">
+              <img className="dge-logo" src={dgeLogo} alt="Department of Government Enablement" />
+            </span>
           </div>
         </div>
         <nav className="tabs">
