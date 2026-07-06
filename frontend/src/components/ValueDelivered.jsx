@@ -20,7 +20,7 @@ export default function ValueDelivered({ state }) {
   return (
     <div className="view">
       <section>
-        <Eyebrow>The scope — {v.activities_total} activities in the client's green & yellow rows</Eyebrow>
+        <Eyebrow>Process scope — from the client's mapping ({v.activities_total} activities, fixed)</Eyebrow>
         <div className="receipt-strip">
           <div className="card receipt">
             <div className="receipt-num">{v.activities_total}</div>
@@ -44,7 +44,13 @@ export default function ValueDelivered({ state }) {
       <div className="two-col">
         <div className="col">
           <div className="card">
-            <Eyebrow>Agent leaderboard — runs this session</Eyebrow>
+            <div>
+              <Eyebrow>This session's execution — agent runs</Eyebrow>
+              <p className="section-note">
+                A different lens from the scope above: one AI activity is often run by several agents
+                (e.g. account creation uses four), so the agent count is higher than the 17 AI activities.
+              </p>
+            </div>
             {board.length === 0 ? (
               <p className="muted-text">No agent runs yet — walk through the journey tabs first.</p>
             ) : (
