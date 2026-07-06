@@ -95,12 +95,12 @@ strong { font-weight: 600; }
 .header-right { display: flex; align-items: center; gap: 18px; }
 /* Official logo on a light chip — never recolor a government brand mark */
 .dge-logo-chip {
-  background: #fff; border-radius: 8px; padding: 12px; display: flex; align-items: center;
+  background: #fff; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center;
   box-shadow: var(--shadow);
   opacity: 0; transition: opacity 300ms ease; /* fades in once the logo image loads */
 }
 .dge-logo-chip.is-loaded { opacity: 1; }
-.dge-logo { height: 44px; width: auto; display: block; }
+.dge-logo { height: 24px; width: auto; display: block; }
 .dge-logo-text { font-size: 11px; color: var(--ink-muted); max-width: 180px; text-align: right; line-height: 1.35; }
 
 .tabs {
@@ -659,7 +659,6 @@ section { display: flex; flex-direction: column; gap: 12px; }
   border-bottom: 1px solid var(--line); color: var(--ink-muted); font-size: 13px;
 }
 .hours-on { color: var(--ink); }
-.hours-tick { width: 18px; flex: none; color: var(--green); display: flex; }
 .hours-label { flex: 1; }
 .hours-val { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
 .hours-row:not(.hours-on) .hours-val { font-weight: 400; }
@@ -722,7 +721,7 @@ section { display: flex; flex-direction: column; gap: 12px; }
 
 .profile-card { position: relative; overflow: hidden; padding-top: 0; }
 .profile-arc {
-  height: 64px; margin: 0 -20px;
+  height: 32px; margin: 0 -20px;
   background: linear-gradient(135deg, var(--acc-deep), var(--acc));
   border-bottom: none;
 }
@@ -732,7 +731,7 @@ section { display: flex; flex-direction: column; gap: 12px; }
   font-size: 22px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   border: 3px solid var(--card);
-  margin: -36px auto 8px; position: relative;
+  margin: -28px auto 8px; position: relative;
 }
 .profile-id { text-align: center; }
 .profile-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
@@ -758,8 +757,13 @@ section { display: flex; flex-direction: column; gap: 12px; }
 /* ---------- manager phases & HR cohort ---------- */
 
 .phase-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.phase-head-ruled {
+  justify-content: space-between; border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
 .phase-line { flex: 1; height: 1px; background: var(--line); min-width: 40px; }
 .cadence-inline { align-items: flex-end; }
+.phase-head-ruled .cadence { align-items: flex-end; }
 
 .cohort-list { display: flex; flex-direction: column; margin-top: 8px; }
 .cohort-row {
@@ -899,12 +903,12 @@ section { display: flex; flex-direction: column; gap: 12px; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 /* ---------- document review modal ---------- */
-.doc-modal { max-width: 720px; display: flex; flex-direction: column; max-height: 88vh; }
+.doc-modal { max-width: 760px; width: 100%; display: flex; flex-direction: column; max-height: 85vh; }
 .doc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
 .doc-title { font-weight: 700; font-size: 16px; }
 .doc-sub { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
 .doc-scroll {
-  overflow-y: auto; min-height: 200px; max-height: 44vh;
+  overflow-y: auto; flex: 1 1 auto; min-height: 240px;
   background: #FAFAF9; border: 1px solid var(--line);
   border-radius: 8px; padding: 28px 32px; color: #1F2937;
 }
@@ -1157,3 +1161,51 @@ section { display: flex; flex-direction: column; gap: 12px; }
   0% { opacity: 0.9; width: 10px; height: 10px; }
   100% { opacity: 0; width: 52px; height: 52px; }
 }
+
+
+/* ---------- round 2: layout & structure ---------- */
+
+/* Day-1 readiness: tracker, not tags (≤96px tall) */
+.readiness-card { padding: 12px 20px; }
+.readiness-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.readiness-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.readiness-count { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.readiness-track { display: flex; gap: 2px; margin: 6px 0 8px; }
+.readiness-seg { flex: 1; height: 4px; border-radius: 999px; background: var(--line-strong); transition: background var(--speed) ease; }
+.readiness-seg-done { background: var(--green); }
+.readiness-card .readiness-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-start; }
+.ready-chip { cursor: pointer; }
+.ready-done { color: var(--green); background: var(--green-soft); }
+.ready-done::before { display: none; }
+.ready-active { color: var(--acc-light); background: var(--acc-soft); }
+.ready-active::before { display: none; }
+.ready-locked { color: var(--ink-muted); background: var(--card-hov); }
+.ready-locked::before { display: none; }
+.spin-slow { animation: spin 1.6s linear infinite; }
+
+/* scroll-link target highlight */
+.flash { animation: flash-bg 1.3s ease; }
+@keyframes flash-bg {
+  0% { background: var(--card-hov); }
+  100% { background: var(--card); }
+}
+
+/* compact locked/waiting cards */
+.card-compact { padding: 14px 20px; opacity: 0.7; min-height: 0; }
+.card-compact .locked-note { margin-top: 4px; padding: 4px 0; }
+
+/* Aisha: chat uses the wide main column */
+.journey-right .chat-card .chat-scroll { max-height: 340px; }
+.journey-right .chat-card .msg { max-width: 640px; }
+.journey-right .chat-card .chat-suggest { flex-direction: row; flex-wrap: wrap; }
+.journey-right .chat-card .chat-input { min-height: 44px; }
+.journey-right .chat-card .btn-icon { min-height: 44px; }
+
+/* Aisha: offer empty state — content block, not a banner */
+.empty-state { max-width: 480px; margin: 0 auto; padding: 16px 12px 12px; }
+
+/* floating UI clearance while the tour popover is open */
+body.guide-open .main { padding-bottom: 300px; }
+
+/* hours list: label starts at the content edge; tick rides with the value */
+.hours-tick { width: 18px; flex: none; color: var(--green); display: flex; justify-content: flex-end; }

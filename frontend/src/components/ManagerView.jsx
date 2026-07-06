@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, FileText, KeyRound, CalendarClock, Play, FolderSearch, ShieldCheck, MapPin, Users as UsersIcon, UserRound, CalendarDays } from 'lucide-react';
+import { Check, FileText, KeyRound, CalendarClock, Play, FolderSearch, ShieldCheck, MapPin, Users as UsersIcon, UserRound, CalendarDays, CheckCircle2, Loader2, Lock } from 'lucide-react';
 import { Eyebrow, TermsTable, CrewPlayer, AgentTag, LockedNote, RunRow, Badge, TaskIcon, PersonaProfileCard } from './shared.jsx';
 import { PERSONAS } from '../personas.js';
 import OfferReviewModal from './OfferReviewModal.jsx';
@@ -33,31 +33,27 @@ export default function ManagerView({ state, act, activity, busy }) {
         </aside>
 
         <div className="journey-right">
-      <div className="persona-banner card">
-        <Readiness c={c} />
-      </div>
+      <Readiness c={c} />
 
       <section>
-        <div className="phase-head">
+        <div className="phase-head phase-head-ruled">
           <Eyebrow>Before day 1</Eyebrow>
-          <span className="phase-line" />
         </div>
         <div className="two-col">
           <div className="col">
             <OfferReview c={c} act={act} activity={activity} busy={busy} />
             <ScheduleCard c={c} act={act} activity={activity} busy={busy} />
+            <IdentityPipeline state={state} act={act} activity={activity} busy={busy} />
           </div>
           <div className="col">
             <StatusUpdates c={c} />
-            <IdentityPipeline state={state} act={act} activity={activity} busy={busy} />
           </div>
         </div>
       </section>
 
       <section>
-        <div className="phase-head">
+        <div className="phase-head phase-head-ruled">
           <Eyebrow>Day 1 onwards</Eyebrow>
-          <span className="phase-line" />
           <Cadence decided={p.status === 'decided'} />
         </div>
         <div className="two-col">
@@ -123,7 +119,7 @@ function StatusUpdates({ c }) {
   items.push(['Benefits enrolment completed', c.benefits.status === 'enrolled']);
   items.push(['Training & compliance report filed', ['compiled', 'decided'].includes(c.probation.status)]);
   return (
-    <div className="card">
+    <div className="card" id="m-status">
       <Eyebrow>Status updates — no action needed</Eyebrow>
       <div className="status-feed">
         {items.map(([label, done]) => (
@@ -138,21 +134,48 @@ function StatusUpdates({ c }) {
 }
 
 function Readiness({ c }) {
+  // state: done | active (live now) | locked (waiting on an earlier step)
   const items = [
-    ['Offer accepted', c.offer.status === 'accepted'],
-    ['Pre-boarding data', c.details.status === 'submitted'],
-    ['IT account', c.provisioning.status === 'done'],
-    ['Schedule', c.schedule.status === 'confirmed'],
-    ['Benefits', c.benefits.status === 'enrolled'],
+    ['Offer accepted',
+      c.offer.status === 'accepted' ? 'done' : 'active', 'm-offer'],
+    ['Pre-boarding data',
+      c.details.status === 'submitted' ? 'done' : c.details.status === 'available' ? 'active' : 'locked', 'm-status'],
+    ['IT account',
+      c.provisioning.status === 'done' ? 'done' : c.provisioning.status === 'ready' ? 'active' : 'locked', 'm-access'],
+    ['Schedule',
+      c.schedule.status === 'confirmed' ? 'done' : c.schedule.status === 'proposed' ? 'active' : 'locked', 'm-schedule'],
+    ['Benefits',
+      c.benefits.status === 'enrolled' ? 'done' : ['open', 'flagged'].includes(c.benefits.status) ? 'active' : 'locked', 'm-status'],
   ];
+  const doneCount = items.filter(([, st]) => st === 'done').length;
+
+  function jump(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('flash');
+    void el.offsetWidth; // restart the highlight animation
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1400);
+  }
+
   return (
-    <div className="readiness">
-      <div className="eyebrow">Day-1 readiness</div>
+    <div className="card readiness-card">
+      <div className="readiness-head">
+        <span className="readiness-title">Day-1 readiness</span>
+        <span className="readiness-count">{doneCount} of {items.length} ready</span>
+      </div>
+      <div className="readiness-track">
+        {items.map(([label, st]) => (
+          <span key={label} className={`readiness-seg ${st === 'done' ? 'readiness-seg-done' : ''}`} />
+        ))}
+      </div>
       <div className="readiness-row">
-        {items.map(([label, ok]) => (
-          <span key={label} className={`ready-chip ${ok ? 'ready-ok' : ''}`}>
-            {ok && <Check size={11} />} {label}
-          </span>
+        {items.map(([label, st, target]) => (
+          <button key={label} className={`ready-chip ready-${st}`} onClick={() => jump(target)} title="Jump to this card">
+            {st === 'done' ? <CheckCircle2 size={13} /> : st === 'active' ? <Loader2 size={13} className="spin-slow" /> : <Lock size={11} />}
+            {label}
+          </button>
         ))}
       </div>
     </div>
@@ -163,7 +186,7 @@ function OfferReview({ c, act, activity, busy }) {
   const o = c.offer;
   const [reviewOpen, setReviewOpen] = useState(false);
   return (
-    <div className="card">
+    <div className={`card ${o.status === 'hr_review' ? 'card-compact' : ''}`} id="m-offer">
       <div className="card-head-row">
         <Eyebrow>Offer approval</Eyebrow>
         <FileText size={15} className="card-head-icon" />
@@ -231,7 +254,7 @@ function IdentityPipeline({ state, act, activity, busy }) {
   );
 
   return (
-    <div className="card">
+    <div className={`card ${p.status === 'locked' && !playing ? 'card-compact' : ''}`} id="m-access">
       <div className="card-head-row">
         <Eyebrow>Access approvals — identity & applications</Eyebrow>
         <KeyRound size={15} className="card-head-icon" />
@@ -281,7 +304,7 @@ function ScheduleCard({ c, act, activity, busy }) {
   const s = c.schedule;
   const playing = isPlaying(activity, 'confirm-schedule');
   return (
-    <div className="card">
+    <div className={`card ${s.status === 'locked' ? 'card-compact' : ''}`} id="m-schedule">
       <div className="card-head-row">
         <Eyebrow>Schedule, equipment & training approvals</Eyebrow>
         <CalendarClock size={15} className="card-head-icon" />

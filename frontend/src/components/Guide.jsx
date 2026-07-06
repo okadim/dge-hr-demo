@@ -96,6 +96,14 @@ export default function Guide({ state, view, persona, setView, setPersona, activ
 
   useEffect(() => () => pointerTimers.current.forEach(clearTimeout), []);
 
+  // Reserve room under the content while the popover is open so it never
+  // covers the last cards on a screen (e.g. the probation decision).
+  const openNow = !hidden;
+  useEffect(() => {
+    document.body.classList.toggle('guide-open', openNow);
+    return () => document.body.classList.remove('guide-open');
+  }, [openNow]);
+
   // Drag to move — the popup floats and can cover content, so let the user
   // park it anywhere. Buttons inside stay clickable (drag starts elsewhere).
   function onPointerDown(e) {

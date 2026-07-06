@@ -43,11 +43,11 @@ export default function EmployeeJourney({ state, act, activity, busy }) {
             </ul>
           </div>
 
-          <ChatCard state={state} act={act} activity={activity} busy={busy} />
         </aside>
 
         <div className="journey-right">
           <OfferCard c={c} act={act} activity={activity} busy={busy} />
+          <ChatCard state={state} act={act} activity={activity} busy={busy} />
           {c.welcome_pack.ready && <WelcomePack pack={c.welcome_pack} />}
           <DetailsCard c={c} act={act} activity={activity} busy={busy} />
           <BenefitsCard c={c} act={act} activity={activity} busy={busy} />

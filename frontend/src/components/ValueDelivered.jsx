@@ -1,4 +1,4 @@
-import { Check, Bot, Zap, ShieldCheck } from 'lucide-react';
+import { Check, Bot, Zap, ShieldCheck, ClipboardList } from 'lucide-react';
 import { Eyebrow, Badge, AgentTypeChip } from './shared.jsx';
 
 export default function ValueDelivered({ state }) {
@@ -24,7 +24,7 @@ export default function ValueDelivered({ state }) {
         <div className="receipt-strip">
           <div className="card receipt">
             <div className="receipt-num">{v.activities_total}</div>
-            <div className="receipt-label">activities in scope</div>
+            <div className="receipt-label"><ClipboardList size={13} /> activities in scope</div>
           </div>
           <div className="card receipt receipt-ai">
             <div className="receipt-num">{v.ai_run}</div>
@@ -68,29 +68,6 @@ export default function ValueDelivered({ state }) {
               Advisor presents plans and later guides the selection).
             </p>
           </div>
-        </div>
-
-        <div className="col">
-          <div className="card">
-            <Eyebrow>Estimated hours saved per hire — LLM-estimated</Eyebrow>
-            <div className="hours-table">
-              {v.hours_saved.map((h) => (
-                <div key={h.label} className={`hours-row ${h.achieved ? 'hours-on' : ''}`}>
-                  <span className="hours-tick">{h.achieved && <Check size={13} />}</span>
-                  <span className="hours-label">{h.label}</span>
-                  <span className="hours-val">{h.hours.toFixed(1)} h</span>
-                </div>
-              ))}
-              <div className="hours-total-row">
-                <span>Saved so far this session</span>
-                <span className="hours-total">{totalHours.toFixed(1)} h</span>
-              </div>
-            </div>
-            <p className="assumption-note">
-              Hours are estimated by an LLM from the as-is manual effort described in the client mapping —
-              illustrative, not audited. A milestone counts only once completed in this session.
-            </p>
-          </div>
 
           <div className="card human-panel">
             <div className="card-head-row">
@@ -112,6 +89,29 @@ export default function ValueDelivered({ state }) {
               </li>
             </ul>
             <p className="human-why">AI drafts, routes, and validates — accountable humans decide.</p>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card">
+            <Eyebrow>Estimated hours saved per hire — LLM-estimated</Eyebrow>
+            <div className="hours-table">
+              {v.hours_saved.map((h) => (
+                <div key={h.label} className={`hours-row ${h.achieved ? 'hours-on' : ''}`}>
+                  <span className="hours-label">{h.label}</span>
+                  <span className="hours-tick">{h.achieved && <Check size={13} />}</span>
+                  <span className="hours-val">{h.hours.toFixed(1)} h</span>
+                </div>
+              ))}
+              <div className="hours-total-row">
+                <span>Saved so far this session</span>
+                <span className="hours-total">{totalHours.toFixed(1)} h</span>
+              </div>
+            </div>
+            <p className="assumption-note">
+              Hours are estimated by an LLM from the as-is manual effort described in the client mapping —
+              illustrative, not audited. A milestone counts only once completed in this session.
+            </p>
           </div>
         </div>
       </div>
