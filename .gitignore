@@ -1,0 +1,8 @@
+backend/.env
+.venv/
+node_modules/
+dist/
+__pycache__/
+.claude/
+.DS_Store
+*.xlsx
