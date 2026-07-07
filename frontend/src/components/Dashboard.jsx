@@ -14,8 +14,11 @@ import { STAGES } from '../stages.js';
 //    selection, employee goal acknowledgement, manager probation confirmation).
 // daysSaved = LLM-estimated end-to-end time incl. eliminated manual waiting
 //   (ticket queues, approval loops, external checks), on top of ~10.5h effort.
+// Scope from the client's mapping (46 highlighted rows = 30 AI-managed +
+// 10 system + 6 stays-manual). 41 automatable tasks = 30 AI + 10 system +
+// 1 human-decision task. Oracle/custom counts come live from the roster.
 const SCOPE = {
-  steps: 7, tasks: 37, ai: 26, oracle: 19, custom: 10, system: 10,
+  steps: 8, tasks: 41, ai: 30, system: 10,
   human: 8, hoursActive: 10.5, daysSaved: 6,
 };
 
@@ -23,13 +26,15 @@ export default function Dashboard({ state, setView }) {
   const automated = SCOPE.ai + SCOPE.system;
   const pctAutomated = Math.round((automated / SCOPE.tasks) * 100);
   const pctAgent = Math.round((SCOPE.ai / SCOPE.tasks) * 100);
-  const agentsTotal = SCOPE.oracle + SCOPE.custom;
-  const pctOracle = Math.round((SCOPE.oracle / agentsTotal) * 100);
+  const oracle = state.roster.filter((a) => a.badge === 'Oracle Fusion HCM').length;
+  const custom = state.roster.length - oracle;
+  const agentsTotal = oracle + custom;
+  const pctOracle = Math.round((oracle / agentsTotal) * 100);
 
   const tiles = [
     { icon: Gauge, value: `${pctAutomated}%`, label: 'Automated', sub: `${automated} of ${SCOPE.tasks} tasks`, accent: 'green' },
     { icon: Sparkles, value: `${pctAgent}%`, label: 'AI-agent driven', sub: `${SCOPE.ai} of ${SCOPE.tasks} tasks`, accent: 'oracle' },
-    { icon: Building2, value: `${pctOracle}%`, label: 'Oracle-driven', sub: `${SCOPE.oracle} Oracle · ${SCOPE.custom} custom agents`, accent: 'oracle' },
+    { icon: Building2, value: `${pctOracle}%`, label: 'Oracle-driven', sub: `${oracle} Oracle · ${custom} custom agents`, accent: 'oracle' },
     { icon: Layers, value: SCOPE.steps, label: 'Process steps' },
     { icon: ListChecks, value: SCOPE.tasks, label: 'Tasks in scope', sub: 'from the client’s mapping' },
     { icon: UserCheck, value: SCOPE.human, label: 'Human approvals', sub: 'review & sign-off gates', accent: 'human' },
@@ -53,7 +58,7 @@ export default function Dashboard({ state, setView }) {
       </section>
 
       <section>
-        <Eyebrow>The seven process steps</Eyebrow>
+        <Eyebrow>The eight process steps</Eyebrow>
         <div className="dash-steps">
           {STAGES.map((s, i) => (
             <button key={s.n} className="card dash-step" onClick={() => setView('overview')}>

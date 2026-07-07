@@ -27,7 +27,11 @@ export const STAGES = [
     n: 3, title: 'Role Assignment & Equipment',
     activities: [
       { code: '3.1.3', persona: 'Manager', label: 'Define work schedule & location', mode: 'ai', agents: ['HCM_73', 'HCM_6'], trigger: 'Position profile' },
+      { code: '3.2.1', persona: 'HR', label: 'Determine equipment entitlement by role', mode: 'ai', agents: ['HCM_149'], trigger: 'Position profile' },
+      { code: '3.2.2', persona: 'System', label: 'Raise equipment request / purchase requisition', mode: 'ai', trigger: 'Entitlement determined' },
       { code: '3.2.3', persona: 'Employee', label: 'Track delivery & confirm receipt', mode: 'system' },
+      { code: '3.3.1', persona: 'IT', label: 'Allocate desk / workspace', mode: 'human' },
+      { code: '3.3.2', persona: 'IT', label: 'Set up workstation (image, peripherals)', mode: 'human' },
     ],
   },
   {
@@ -43,7 +47,25 @@ export const STAGES = [
   {
     n: 5, title: 'Mandatory Training & Compliance',
     activities: [
+      { code: '5.1.1', persona: 'HR', label: 'Determine required training by role & location', mode: 'ai', agents: ['HCM_45', 'HCM_123'], trigger: 'Role confirmed' },
+      { code: '5.1.2', persona: 'System', label: 'Assign learning items to new hire', mode: 'system' },
+      { code: '5.1.3', persona: 'System', label: 'Notify new hire of training schedule', mode: 'system' },
+      { code: '5.2.1', persona: 'Employee', label: 'Employee completes e-learning modules', mode: 'ai', agents: ['HCM_46', 'HCM_52'], trigger: 'Training assigned' },
+      { code: '5.2.2', persona: 'Employee', label: 'Attend instructor-led sessions (safety, compliance)', mode: 'human' },
+      { code: '5.2.3', persona: 'Employee', label: 'Complete assessments & certifications', mode: 'ai', agents: ['HCM_46'], trigger: 'Modules complete' },
+      { code: '5.3.1', persona: 'HR', label: 'Monitor training completion against deadlines', mode: 'ai', agents: ['HCM_120', 'HCM_95'], trigger: 'Training in progress' },
+      { code: '5.3.2', persona: 'System', label: 'Send reminders for overdue training', mode: 'system' },
       { code: '5.3.3', persona: 'HR', label: 'Report compliance status to HR / audit', mode: 'ai', agents: ['HCM_153'], trigger: 'Training records updated' },
+    ],
+  },
+  {
+    n: 6, title: 'First-day Orientation',
+    activities: [
+      { code: '6.2.1', persona: 'Employee', label: 'Walk through self-service HR portal', mode: 'ai', agents: ['HCM_90', 'HCM_15'], trigger: 'Day 1' },
+      { code: '6.2.2', persona: 'IT', label: 'Confirm system access is working', mode: 'ai', agents: ['HCM_152'], trigger: 'Accounts provisioned' },
+      { code: '6.2.3', persona: 'Employee', label: 'Set up personal preferences', mode: 'human' },
+      { code: '6.3.1', persona: 'Manager', label: 'Schedule meet-the-team sessions', mode: 'ai', trigger: 'Day 1' },
+      { code: '6.3.2', persona: 'Manager', label: 'Assign buddy / mentor', mode: 'ai', agents: ['HCM_79'], trigger: 'Day 1' },
     ],
   },
   {
@@ -57,6 +79,10 @@ export const STAGES = [
   {
     n: 8, title: 'Check-ins & Probation Review',
     activities: [
+      { code: '8.1.1', persona: 'Manager', label: 'Schedule Week 1 / Week 2 / Month 1 check-ins', mode: 'ai', agents: ['HCM_95'], trigger: 'Day 1' },
+      { code: '8.1.2', persona: 'Manager', label: 'Prepare check-in agenda & talking points', mode: 'ai', agents: ['HCM_125', 'HCM_85'], trigger: 'Check-in scheduled' },
+      { code: '8.1.3', persona: 'Manager', label: 'Conduct check-in & record notes', mode: 'ai', agents: ['HCM_119'], trigger: 'Check-in due' },
+      { code: '8.1.4', persona: 'Manager', label: 'Track action items from check-ins', mode: 'ai', agents: ['HCM_95'], trigger: 'Check-in complete' },
       { code: '8.2.2', persona: 'HR', label: 'Assess onboarding progress against checklist', mode: 'ai', agents: ['HCM_97'], trigger: 'Day-30 review' },
       { code: '8.3.2', persona: 'Manager', label: 'Assess skill development & training completion', mode: 'ai', agents: ['HCM_76', 'HCM_52'], trigger: 'Day-60 review' },
       { code: '8.4.1', persona: 'Manager', label: 'Manager completes final probation review', mode: 'ai', agents: ['HCM_81', 'HCM_111'], trigger: 'Day-90 milestone' },
@@ -74,6 +100,7 @@ export function stageStatus(stage, c) {
     3: c.schedule.status === 'confirmed',
     4: c.benefits.status === 'enrolled',
     5: ['compiled', 'decided'].includes(c.probation.status),
+    6: c.provisioning.status === 'done',
     7: ['compiled', 'decided'].includes(c.probation.status),
     8: c.probation.status === 'decided',
   };
@@ -84,6 +111,7 @@ export function stageStatus(stage, c) {
     3: c.schedule.status === 'proposed',
     4: ['open', 'flagged'].includes(c.benefits.status),
     5: c.probation.status === 'ready',
+    6: c.schedule.status === 'confirmed' && c.provisioning.status !== 'done',
     7: c.probation.status === 'ready',
     8: ['ready', 'compiled'].includes(c.probation.status),
   };
